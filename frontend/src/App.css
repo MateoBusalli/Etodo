@@ -1,8 +1,10 @@
-body {
+.text {
   font-family: 'Inter', sans-serif;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-family: 'Poppins', sans-serif;
 }
 
@@ -10,8 +12,16 @@ h1, h2, h3 {
   background-color: #35C0EB;
 }
 
+.white-color {
+  background-color: #EAEBE6;
+}
+
 .darkgrey-color {
   background-color: #181B28;
+}
+
+.greyblue-color {
+  background-color: #2e344a;
 }
 
 hr.blue-color {
@@ -30,9 +40,93 @@ hr.blue-color {
 }
 
 .box_background_color {
-  background-color: #EAEBE6;
   border-radius: 10px;
   padding: 20px;
   margin: 10px;
 }
 
+.app-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 80px;
+}
+
+.content {
+  flex: 1;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 100;
+}
+
+.add-task-btn {
+  background-color: #35C0EB;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 15px 30px;
+  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  margin: 20px;
+  transition: background-color 0.3s;
+}
+
+.add-task-btn:hover {
+  background-color: #2a9dc0;
+}
+
+.task-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.task-title-input {
+  font-family: 'Poppins', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  border: none;
+  background-color: transparent;
+  padding: 5px;
+  outline: none;
+}
+
+.task-title-input:focus {
+  border-bottom: 2px solid #35C0EB;
+}
+
+.task-desc-input {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  border: none;
+  background-color: transparent;
+  padding: 5px;
+  resize: vertical;
+  min-height: 60px;
+  outline: none;
+}
+
+.task-desc-input:focus {
+  border: 1px solid #35C0EB;
+  border-radius: 5px;
+}
+
+.delete-btn {
+  background-color: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 15px;
+  cursor: pointer;
+  align-self: flex-end;
+  font-family: 'Poppins', sans-serif;
+}
+
+.delete-btn:hover {
+  background-color: #cc0000;
+}
