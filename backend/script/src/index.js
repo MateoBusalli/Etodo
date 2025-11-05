@@ -12,11 +12,11 @@ app.use(express.urlencoded({ extended: false}));
 
 //Routes
 app.use("/todos",require("./routes/todos/todos.js"));
-
+app.use("/db",require("./config/db.js"));
 
 //Middleware pour les routes non trouvées
 app.use((req, res, next) => {
-res.status(404).json({error: "Route non trouve au port: "+ req.params.id})
+res.status(404).json({error: "Route non trouve au port: "+ port})
 });
 
 //Lancer le serveur
