@@ -5,7 +5,6 @@ host: "localehost:8000",
 user:"",
 password: "",
 database: "",
-connectionLimit: 5
 });
 
 

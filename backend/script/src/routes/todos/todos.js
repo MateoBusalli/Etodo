@@ -5,8 +5,8 @@ const router = express.Router();
 
 
 //GET
-router.get("/", (req,res) => {
-res.json({message: "voici la liste todos"});
+router.get("/", async(req,res) => {
+
 });
 
 //POST 
