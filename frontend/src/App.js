@@ -5,7 +5,7 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [showAuthPopup, setShowAuthPopup] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
-  
+
   const [authForm, setAuthForm] = useState({
     name: '',
     firstname: '',
@@ -18,18 +18,27 @@ function App() {
 
   useEffect(() => {
     const savedUser = localStorage.getItem('currentUser');
-    if (savedUser) {
+    const token = localStorage.getItem('token');
+
+    if (savedUser && token) {
       setCurrentUser(JSON.parse(savedUser));
-      loadUserLists(JSON.parse(savedUser).id);
+      loadUserLists(token);
     }
   }, []);
 
-  const loadUserLists = async (userId) => {
+  const loadUserLists = async (token) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/lists?user_id=${userId}`);
+      const response = await fetch(`http://localhost:3001/api/lists`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
       if (response.ok) {
         const userLists = await response.json();
         setLists(userLists);
+      } else if (response.status === 401) {
+        handleLogout();
       }
     } catch (error) {
       console.error('Error loading lists:', error);
@@ -55,12 +64,15 @@ function App() {
           throw new Error(error.message || 'Login failed');
         }
 
-        const user = await response.json();
-        setCurrentUser(user);
-        localStorage.setItem('currentUser', JSON.stringify(user));
+        const data = await response.json();
+
+        setCurrentUser(data);
+        localStorage.setItem('currentUser', JSON.stringify(data));
+        localStorage.setItem('token', data.token);
+
         setShowAuthPopup(false);
-        loadUserLists(user.id);
-        
+        loadUserLists(data.token);
+
         setAuthForm({ name: '', firstname: '', email: '', password: '' });
       } catch (error) {
         alert('Login error: ' + error.message);
@@ -83,11 +95,14 @@ function App() {
           throw new Error(error.message || 'Registration failed');
         }
 
-        const user = await response.json();
-        setCurrentUser(user);
-        localStorage.setItem('currentUser', JSON.stringify(user));
+        const data = await response.json();
+
+        setCurrentUser(data);
+        localStorage.setItem('currentUser', JSON.stringify(data));
+        localStorage.setItem('token', data.token);
+
         setShowAuthPopup(false);
-        
+
         setAuthForm({ name: '', firstname: '', email: '', password: '' });
       } catch (error) {
         alert('Registration error: ' + error.message);
@@ -98,6 +113,7 @@ function App() {
   const handleLogout = () => {
     setCurrentUser(null);
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('token');
     setLists([]);
     setShowAuthPopup(true);
   };
@@ -170,6 +186,13 @@ function App() {
 
   const saveListAndTasks = async (listId) => {
     const list = lists.find(l => l.id === listId);
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      alert('Please login first');
+      setShowAuthPopup(true);
+      return;
+    }
 
     if (!list?.title.trim()) {
       alert('List title is required!');
@@ -193,11 +216,13 @@ function App() {
       if (listId < 0) {
         const listResponse = await fetch('http://localhost:3001/api/lists', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           body: JSON.stringify({
             title: list.title,
-            description: list.description || '',
-            user_id: currentUser.id,
+            description: list.description || ''
           })
         });
 
@@ -211,11 +236,13 @@ function App() {
       } else {
         const listResponse = await fetch(`http://localhost:3001/api/lists/${listId}`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           body: JSON.stringify({
             title: list.title,
-            description: list.description || '',
-            user_id: currentUser.id,
+            description: list.description || ''
           })
         });
 
@@ -229,18 +256,20 @@ function App() {
       for (const task of list.subtasks) {
         const isNewTask = task.id < 0;
         const method = isNewTask ? 'POST' : 'PUT';
-        const url = isNewTask 
+        const url = isNewTask
           ? 'http://localhost:3001/api/todos'
           : `http://localhost:3001/api/todos/${task.id}`;
 
         const taskResponse = await fetch(url, {
           method: method,
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           body: JSON.stringify({
             title: task.title,
             description: task.description,
             list_id: savedListId,
-            user_id: currentUser.id,
             status: false
           })
         });
@@ -251,17 +280,17 @@ function App() {
         }
 
         const taskData = await taskResponse.json();
-        savedSubtasks.push({ 
-          ...task, 
-          id: taskData.id, 
-          isSaved: true 
+        savedSubtasks.push({
+          ...task,
+          id: taskData.id,
+          isSaved: true
         });
       }
 
       setLists(lists.map(l => {
         if (l.id === listId) {
-          return { 
-            ...l, 
+          return {
+            ...l,
             id: savedListId,
             isSaved: true,
             subtasks: savedSubtasks
@@ -278,10 +307,15 @@ function App() {
   };
 
   const deleteList = async (id) => {
-    if (id > 0) {
+    const token = localStorage.getItem('token');
+
+    if (id > 0 && token) {
       try {
         await fetch(`http://localhost:3001/api/lists/${id}`, {
-          method: 'DELETE'
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         });
       } catch (error) {
         console.error('Error deleting list:', error);
@@ -291,10 +325,15 @@ function App() {
   };
 
   const deleteSubtask = async (listId, subId) => {
-    if (subId > 0) {
+    const token = localStorage.getItem('token');
+
+    if (subId > 0 && token) {
       try {
         await fetch(`http://localhost:3001/api/todos/${subId}`, {
-          method: 'DELETE'
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         });
       } catch (error) {
         console.error('Error deleting task:', error);
@@ -364,7 +403,7 @@ function App() {
           </div>
         </div>
       )}
-      
+
       <div className="content">
         <header className="box_background_color greyblue-color">
           <div className="header-content">
@@ -379,7 +418,7 @@ function App() {
             )}
           </div>
         </header>
-        
+
         <h2 className="center white_font">Your Tasks</h2>
         <hr className="blue-color" />
 
@@ -398,18 +437,18 @@ function App() {
               onChange={(e) => updateList(list.id, 'title', e.target.value)}
               className="task-title-input"
             />
-            
+
             <div className="center">
-              <button 
-                onClick={() => saveListAndTasks(list.id)} 
+              <button
+                onClick={() => saveListAndTasks(list.id)}
                 className={`add-task-btn ${list.isSaved ? 'saved' : ''}`}
                 style={{ marginRight: '10px' }}
               >
                 {list.isSaved ? 'List & Tasks Saved' : 'Update List'}
               </button>
-              
-              <button 
-                onClick={() => addSubtask(list.id)} 
+
+              <button
+                onClick={() => addSubtask(list.id)}
                 className="add-task-btn"
               >
                 + Add Task
@@ -425,17 +464,17 @@ function App() {
                   onChange={(e) => updateSubtask(list.id, task.id, 'title', e.target.value)}
                   className="task-title-input"
                 />
-                
+
                 <textarea
                   placeholder="Task description..."
                   value={task.description}
                   onChange={(e) => updateSubtask(list.id, task.id, 'description', e.target.value)}
                   className="task-desc-input"
                 />
-                
+
                 <div className="button-group">
-                  <button 
-                    onClick={() => deleteSubtask(list.id, task.id)} 
+                  <button
+                    onClick={() => deleteSubtask(list.id, task.id)}
                     className="delete-btn"
                   >
                     Delete
@@ -444,8 +483,8 @@ function App() {
               </div>
             ))}
 
-            <button 
-              onClick={() => deleteList(list.id)} 
+            <button
+              onClick={() => deleteList(list.id)}
               className="delete-btn"
             >
               Delete List
