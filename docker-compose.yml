@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # Database
+  db:
+    image: mariadb:latest
+    container_name: etodo-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: etodo
+      MYSQL_USER: etodo_user
+      MYSQL_PASSWORD: etodo_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./e-todo.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - etodo-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 10
+
+  # Backend API
+  backend:
+    build: ./backend
+    container_name: etodo-backend
+    restart: always
+    environment:
+      PORT: 3001
+      DB_HOST: db
+      DB_USER: etodo_user
+      DB_PASSWORD: etodo_password
+      DB_NAME: etodo
+    ports:
+      - "3001:3001"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - etodo-network
+
+  # Frontend
+  frontend:
+    build: ./frontend
+    container_name: etodo-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      REACT_APP_API_URL: http://localhost:3001
+    depends_on:
+      - backend
+    networks:
+      - etodo-network
+
+networks:
+  etodo-network:
+    driver: bridge
+
+volumes:
+  db_data:

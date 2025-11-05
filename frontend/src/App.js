@@ -457,7 +457,7 @@ function App() {
       <footer>
         <hr className="blue-color" />
         <div className="center white_font box_background_color greyblue-color">
-          test
+          Made by Hugo & Matéo - Epitech 2025
         </div>
       </footer>
     </div>
