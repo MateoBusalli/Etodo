@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false}));
 
 //Routes
-app.use("/todos",require("./routes/todos/todos"));
+app.use("/todos",require("./routes/todos/todos.js"));
 
 
 //Middleware pour les routes non trouvées
