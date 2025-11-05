@@ -1,10 +1,8 @@
-.text {
+.inter-font {
   font-family: 'Inter', sans-serif;
 }
 
-h1,
-h2,
-h3 {
+.poppins-font {
   font-family: 'Poppins', sans-serif;
 }
 
@@ -83,6 +81,8 @@ footer {
 .task-card {
   display: flex;
   flex-direction: column;
+  border: 2px solid black;
+  background-color: rgb(202, 222, 235);
   gap: 10px;
 }
 
@@ -129,4 +129,34 @@ footer {
 
 .delete-btn:hover {
   background-color: #cc0000;
+}
+
+.update-btn {
+  background-color: #35C0EB;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 15px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  transition: background-color 0.3s;
+}
+
+.update-btn:hover {
+  background-color: #2a9dc0;
+}
+
+.update-btn.saved {
+  background-color: #4CAF50;
+}
+
+.update-btn.saved:hover {
+  background-color: #45a049;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  align-items: center;
 }
