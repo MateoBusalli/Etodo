@@ -1,9 +1,106 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [showAuthPopup, setShowAuthPopup] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
+  
+  const [authForm, setAuthForm] = useState({
+    name: '',
+    firstname: '',
+    email: '',
+    password: ''
+  });
+
   const [lists, setLists] = useState([]);
   const [nextId, setNextId] = useState(1);
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) {
+      setCurrentUser(JSON.parse(savedUser));
+      loadUserLists(JSON.parse(savedUser).id);
+    }
+  }, []);
+
+  const loadUserLists = async (userId) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/lists?user_id=${userId}`);
+      if (response.ok) {
+        const userLists = await response.json();
+        setLists(userLists);
+      }
+    } catch (error) {
+      console.error('Error loading lists:', error);
+    }
+  };
+
+  const handleAuthSubmit = async (e) => {
+    e.preventDefault();
+
+    if (isLogin) {
+      try {
+        const response = await fetch('http://localhost:3001/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: authForm.email,
+            password: authForm.password
+          })
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || 'Login failed');
+        }
+
+        const user = await response.json();
+        setCurrentUser(user);
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        setShowAuthPopup(false);
+        loadUserLists(user.id);
+        
+        setAuthForm({ name: '', firstname: '', email: '', password: '' });
+      } catch (error) {
+        alert('Login error: ' + error.message);
+      }
+    } else {
+      if (!authForm.name || !authForm.firstname || !authForm.email || !authForm.password) {
+        alert('All fields are required for registration!');
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:3001/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(authForm)
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || 'Registration failed');
+        }
+
+        const user = await response.json();
+        setCurrentUser(user);
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        setShowAuthPopup(false);
+        
+        setAuthForm({ name: '', firstname: '', email: '', password: '' });
+      } catch (error) {
+        alert('Registration error: ' + error.message);
+      }
+    }
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    localStorage.removeItem('currentUser');
+    setLists([]);
+    setShowAuthPopup(true);
+  };
 
   const addList = () => {
     const newList = {
@@ -100,7 +197,7 @@ function App() {
           body: JSON.stringify({
             title: list.title,
             description: list.description || '',
-            user_id: 1,
+            user_id: currentUser.id,
           })
         });
 
@@ -118,7 +215,7 @@ function App() {
           body: JSON.stringify({
             title: list.title,
             description: list.description || '',
-            user_id: 1,
+            user_id: currentUser.id,
           })
         });
 
@@ -143,7 +240,7 @@ function App() {
             title: task.title,
             description: task.description,
             list_id: savedListId,
-            user_id: 1,
+            user_id: currentUser.id,
             status: false
           })
         });
@@ -180,11 +277,29 @@ function App() {
     }
   };
 
-  const deleteList = (id) => {
+  const deleteList = async (id) => {
+    if (id > 0) {
+      try {
+        await fetch(`http://localhost:3001/api/lists/${id}`, {
+          method: 'DELETE'
+        });
+      } catch (error) {
+        console.error('Error deleting list:', error);
+      }
+    }
     setLists(lists.filter(list => list.id !== id));
   };
 
-  const deleteSubtask = (listId, subId) => {
+  const deleteSubtask = async (listId, subId) => {
+    if (subId > 0) {
+      try {
+        await fetch(`http://localhost:3001/api/todos/${subId}`, {
+          method: 'DELETE'
+        });
+      } catch (error) {
+        console.error('Error deleting task:', error);
+      }
+    }
     setLists(lists.map(list => {
       if (list.id === listId) {
         return {
@@ -198,12 +313,74 @@ function App() {
 
   return (
     <div className="app-wrapper">
+      {showAuthPopup && (
+        <div className="auth-overlay">
+          <div className="auth-popup">
+            <button onClick={() => setShowAuthPopup(false)} className="close-popup-btn">×</button>
+            <h2>{isLogin ? 'Login' : 'Register'}</h2>
+            <form onSubmit={handleAuthSubmit}>
+              {!isLogin && (
+                <>
+                  <input
+                    type="text"
+                    placeholder="Username"
+                    value={authForm.name}
+                    onChange={(e) => setAuthForm({ ...authForm, name: e.target.value })}
+                    className="auth-input"
+                  />
+                  <input
+                    type="text"
+                    placeholder="First Name"
+                    value={authForm.firstname}
+                    onChange={(e) => setAuthForm({ ...authForm, firstname: e.target.value })}
+                    className="auth-input"
+                  />
+                </>
+              )}
+              <input
+                type="email"
+                placeholder="Email"
+                value={authForm.email}
+                onChange={(e) => setAuthForm({ ...authForm, email: e.target.value })}
+                className="auth-input"
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                value={authForm.password}
+                onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })}
+                className="auth-input"
+              />
+              <button type="submit" className="auth-btn">
+                {isLogin ? 'Login' : 'Register'}
+              </button>
+            </form>
+            <p className="auth-toggle">
+              {isLogin ? "Don't have an account? " : "Already have an account? "}
+              <span onClick={() => setIsLogin(!isLogin)}>
+                {isLogin ? 'Register' : 'Login'}
+              </span>
+            </p>
+          </div>
+        </div>
+      )}
+      
       <div className="content">
         <header className="box_background_color greyblue-color">
-          <h1 className="center white_font poppins-font">DoNext</h1>
+          <div className="header-content">
+            <h1 className="center white_font">DoNext</h1>
+            {currentUser ? (
+              <div className="user-info">
+                <span className="white_font">Welcome, {currentUser?.firstname || currentUser?.name}!</span>
+                <button onClick={handleLogout} className="logout-btn">Logout</button>
+              </div>
+            ) : (
+              <button onClick={() => setShowAuthPopup(true)} className="login-btn">Login</button>
+            )}
+          </div>
         </header>
-
-        <h2 className="center white_font poppins-font">Your Tasks</h2>
+        
+        <h2 className="center white_font">Your Tasks</h2>
         <hr className="blue-color" />
 
         <div className="center">
@@ -213,7 +390,7 @@ function App() {
         </div>
 
         {lists.map((list) => (
-          <div key={list.id} className="box_background_color white-color task-card inter-font">
+          <div key={list.id} className="box_background_color white-color task-card">
             <input
               type="text"
               placeholder="List title..."
@@ -240,20 +417,20 @@ function App() {
             </div>
 
             {list.subtasks.map((task) => (
-              <div key={task.id} className="box_background_color white-color task-card  inter-font">
+              <div key={task.id} className="box_background_color white-color task-card">
                 <input
                   type="text"
                   placeholder="Task title..."
                   value={task.title}
                   onChange={(e) => updateSubtask(list.id, task.id, 'title', e.target.value)}
-                  className="task-title-input inter-font"
+                  className="task-title-input"
                 />
                 
                 <textarea
                   placeholder="Task description..."
                   value={task.description}
                   onChange={(e) => updateSubtask(list.id, task.id, 'description', e.target.value)}
-                  className="task-desc-input inter-font"
+                  className="task-desc-input"
                 />
                 
                 <div className="button-group">
@@ -279,8 +456,8 @@ function App() {
 
       <footer>
         <hr className="blue-color" />
-        <div className="center white_font box_background_color greyblue-color poppins-font">
-          Made by Hugo & Matéo - Epitech 2025
+        <div className="center white_font box_background_color greyblue-color">
+          test
         </div>
       </footer>
     </div>

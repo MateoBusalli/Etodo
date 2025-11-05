@@ -1,8 +1,10 @@
-.inter-font {
+.text {
   font-family: 'Inter', sans-serif;
 }
 
-.poppins-font {
+h1,
+h2,
+h3 {
   font-family: 'Poppins', sans-serif;
 }
 
@@ -76,6 +78,14 @@ footer {
 
 .add-task-btn:hover {
   background-color: #2a9dc0;
+}
+
+.add-task-btn.saved {
+  background-color: #4CAF50;
+}
+
+.add-task-btn.saved:hover {
+  background-color: #45a049;
 }
 
 .task-card {
@@ -159,4 +169,161 @@ footer {
   gap: 10px;
   justify-content: flex-end;
   align-items: center;
+}
+
+.auth-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(24, 27, 40, 0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.auth-popup {
+  position: relative;
+  background-color: #2e344a;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 400px;
+}
+
+.auth-popup h2 {
+  color: white;
+  text-align: center;
+  margin-bottom: 30px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.auth-popup form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.auth-input {
+  padding: 12px 15px;
+  border: 2px solid #35C0EB;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+  background-color: #181B28;
+  color: white;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.auth-input:focus {
+  border-color: #2a9dc0;
+}
+
+.auth-input::placeholder {
+  color: #999;
+}
+
+.auth-btn {
+  background-color: #35C0EB;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+
+.auth-btn:hover {
+  background-color: #2a9dc0;
+}
+
+.auth-toggle {
+  text-align: center;
+  color: #ccc;
+  margin-top: 20px;
+  font-family: 'Inter', sans-serif;
+}
+
+.auth-toggle span {
+  color: #35C0EB;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.auth-toggle span:hover {
+  color: #2a9dc0;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logout-btn {
+  background-color: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 15px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  transition: background-color 0.3s;
+}
+
+.logout-btn:hover {
+  background-color: #cc0000;
+}
+
+.login-btn {
+  background-color: #35C0EB;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 20px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  transition: background-color 0.3s;
+  font-size: 16px;
+}
+
+.login-btn:hover {
+  background-color: #2a9dc0;
+}
+
+.close-popup-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 30px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s;
+}
+
+.close-popup-btn:hover {
+  color: #35C0EB;
 }
