@@ -67,22 +67,8 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-
-
-
 //DELETE
-router.delete("/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const conn = await pool.getConnection();
-    await conn.query("DELETE FROM lists WHERE user_id = ?",[id]);
-    await conn.query("DELETE FROM todo WHERE user_id = ?",[id]);
-    await conn.query("DELETE FROM users WHERE id = ?",[id]);
-    conn.release();
-    res.json({ message: "utilisateur supprimé"});
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
+router.delete("/:id",(req,res) => {
+     res.json({message: "Todos supprimé", id: req.params.id});
+})
 module.exports = router;
