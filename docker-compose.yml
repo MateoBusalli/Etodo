@@ -7,10 +7,8 @@ services:
     container_name: etodo-db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: PINEapple
       MYSQL_DATABASE: etodo
-      MYSQL_USER: etodo_user
-      MYSQL_PASSWORD: etodo_password
     ports:
       - "3306:3306"
     volumes:
@@ -31,11 +29,15 @@ services:
     environment:
       PORT: 3001
       DB_HOST: db
-      DB_USER: etodo_user
-      DB_PASSWORD: etodo_password
+      DB_USER: root
+      DB_PASSWORD: PINEapple
       DB_NAME: etodo
+      JWT_SECRET: 7f9a2b8e4d6c1a5f3e8b9d2c4a6f1e7b9c3d5a8f2e4b7d9c1a6f3e5b8d2c4a7f
     ports:
       - "3001:3001"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
     depends_on:
       db:
         condition: service_healthy
@@ -51,6 +53,9 @@ services:
       - "3000:3000"
     environment:
       REACT_APP_API_URL: http://localhost:3001
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     depends_on:
       - backend
     networks:
