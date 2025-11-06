@@ -85,14 +85,4 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-//PATCH - Like
-// router.patch("/like-post/:id",(req,res)=> {
-//     res.json({message:"Post Liké: id: "+ req.params.id })
-// });
-
-
-// //PATCH - Dislike
-// router.patch("/dislike-post/:id",(req,res)=> {
-//     res.json({message:"Post Disliké: id: "+ req.params.id })
-// });
 module.exports = router;
