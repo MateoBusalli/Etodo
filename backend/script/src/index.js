@@ -45,7 +45,7 @@ app.use((req, res, next) => {
 });
 
 // Routes
-app.use("/api", authRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api", todosRoutes);
 app.use("/api", userRoutes);
 
