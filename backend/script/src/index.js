@@ -57,11 +57,11 @@ app.get('/', (req, res) => {
 // 404 handler
 app.use((req, res, next) => {
   res.status(404).json({ 
-    error: "Route non trouvée au port: " + port,
+    error: "Route not found to: " + port,
     path: req.originalUrl
   });
 });
 
 app.listen(port, '0.0.0.0', () => {
-  console.log("Le serveur a démarré au port " + port);
+  console.log("Server started to " + port);
 });
