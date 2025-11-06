@@ -16,6 +16,14 @@ const todosRoutes = require('./routes/todos/todos.js');
 const authRoutes = require('./routes/auth/auth.js');
 const userRoutes = require('./routes/user/user.js');
 
+
+//lignes de debug
+console.log('todosRoutes:', typeof todosRoutes, todosRoutes);
+console.log('authRoutes:', typeof authRoutes, authRoutes);
+console.log('userRoutes:', typeof userRoutes, userRoutes);
+
+
+
 const app = express();
 const port = process.env.PORT || 3001;
 
