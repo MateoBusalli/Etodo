@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './App.css';
 
 function App() {
@@ -16,17 +16,15 @@ function App() {
   const [lists, setLists] = useState([]);
   const [nextId, setNextId] = useState(1);
 
-  useEffect(() => {
-    const savedUser = localStorage.getItem('currentUser');
-    const token = localStorage.getItem('token');
-
-    if (savedUser && token) {
-      setCurrentUser(JSON.parse(savedUser));
-      loadUserLists(token);
-    }
+  const handleLogout = useCallback(() => {
+    setCurrentUser(null);
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('token');
+    setLists([]);
+    setShowAuthPopup(true);
   }, []);
 
-  const loadUserLists = async (token) => {
+  const loadUserLists = useCallback(async (token) => {
     try {
       const response = await fetch(`http://localhost:3001/api/lists`, {
         headers: {
@@ -43,7 +41,17 @@ function App() {
     } catch (error) {
       console.error('Error loading lists:', error);
     }
-  };
+  }, [handleLogout]);
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('currentUser');
+    const token = localStorage.getItem('token');
+
+    if (savedUser && token) {
+      setCurrentUser(JSON.parse(savedUser));
+      loadUserLists(token);
+    }
+  }, [loadUserLists]);
 
   const handleAuthSubmit = async (e) => {
     e.preventDefault();
@@ -108,14 +116,6 @@ function App() {
         alert('Registration error: ' + error.message);
       }
     }
-  };
-
-  const handleLogout = () => {
-    setCurrentUser(null);
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('token');
-    setLists([]);
-    setShowAuthPopup(true);
   };
 
   const addList = () => {

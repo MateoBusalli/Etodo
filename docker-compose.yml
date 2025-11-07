@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Database
   db:
@@ -17,7 +15,8 @@ services:
     networks:
       - etodo-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
       timeout: 5s
       retries: 10
 
