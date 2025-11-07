@@ -74,12 +74,15 @@ function App() {
 
         const data = await response.json();
 
-        setCurrentUser(data);
-        localStorage.setItem('currentUser', JSON.stringify(data));
-        localStorage.setItem('token', data.token);
+        // Extract data from the response
+        const userData = data.data || data;
+
+        setCurrentUser(userData);
+        localStorage.setItem('currentUser', JSON.stringify(userData));
+        localStorage.setItem('token', userData.token);
 
         setShowAuthPopup(false);
-        loadUserLists(data.token);
+        loadUserLists(userData.token);
 
         setAuthForm({ name: '', firstname: '', email: '', password: '' });
       } catch (error) {
@@ -105,9 +108,12 @@ function App() {
 
         const data = await response.json();
 
-        setCurrentUser(data);
-        localStorage.setItem('currentUser', JSON.stringify(data));
-        localStorage.setItem('token', data.token);
+        // Extract data from the response
+        const userData = data.data || data;
+
+        setCurrentUser(userData);
+        localStorage.setItem('currentUser', JSON.stringify(userData));
+        localStorage.setItem('token', userData.token);
 
         setShowAuthPopup(false);
 
