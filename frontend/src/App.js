@@ -87,7 +87,7 @@ function App() {
       }
     } else {
       if (!authForm.name || !authForm.firstname || !authForm.email || !authForm.password) {
-        alert('All fields are required for registration!');
+        alert('All fields are required for registration');
         return;
       }
 
@@ -195,17 +195,17 @@ function App() {
     }
 
     if (!list?.title.trim()) {
-      alert('List title is required!');
+      alert('List title is required');
       return;
     }
 
     for (const task of list.subtasks) {
       if (!task.title.trim()) {
-        alert('All task titles are required!');
+        alert('All task titles are required');
         return;
       }
       if (!task.description.trim()) {
-        alert('All task descriptions are required!');
+        alert('All task descriptions are required');
         return;
       }
     }
@@ -299,7 +299,7 @@ function App() {
         return l;
       }));
 
-      alert('List and all tasks saved successfully!');
+      alert('List and all tasks saved successfully');
     } catch (error) {
       console.error('Error saving:', error);
       alert('Error saving: ' + error.message);
