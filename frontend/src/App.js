@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './App.css';
 
 function App() {
@@ -16,17 +16,15 @@ function App() {
   const [lists, setLists] = useState([]);
   const [nextId, setNextId] = useState(1);
 
-  useEffect(() => {
-    const savedUser = localStorage.getItem('currentUser');
-    const token = localStorage.getItem('token');
-
-    if (savedUser && token) {
-      setCurrentUser(JSON.parse(savedUser));
-      loadUserLists(token);
-    }
+  const handleLogout = useCallback(() => {
+    setCurrentUser(null);
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('token');
+    setLists([]);
+    setShowAuthPopup(true);
   }, []);
 
-  const loadUserLists = async (token) => {
+  const loadUserLists = useCallback(async (token) => {
     try {
       const response = await fetch(`http://localhost:3001/api/lists`, {
         headers: {
@@ -43,7 +41,17 @@ function App() {
     } catch (error) {
       console.error('Error loading lists:', error);
     }
-  };
+  }, [handleLogout]);
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('currentUser');
+    const token = localStorage.getItem('token');
+
+    if (savedUser && token) {
+      setCurrentUser(JSON.parse(savedUser));
+      loadUserLists(token);
+    }
+  }, [loadUserLists]);
 
   const handleAuthSubmit = async (e) => {
     e.preventDefault();
@@ -66,12 +74,15 @@ function App() {
 
         const data = await response.json();
 
-        setCurrentUser(data);
-        localStorage.setItem('currentUser', JSON.stringify(data));
-        localStorage.setItem('token', data.token);
+        // Extract data from the response
+        const userData = data.data || data;
+
+        setCurrentUser(userData);
+        localStorage.setItem('currentUser', JSON.stringify(userData));
+        localStorage.setItem('token', userData.token);
 
         setShowAuthPopup(false);
-        loadUserLists(data.token);
+        loadUserLists(userData.token);
 
         setAuthForm({ name: '', firstname: '', email: '', password: '' });
       } catch (error) {
@@ -79,7 +90,7 @@ function App() {
       }
     } else {
       if (!authForm.name || !authForm.firstname || !authForm.email || !authForm.password) {
-        alert('All fields are required for registration!');
+        alert('All fields are required for registration');
         return;
       }
 
@@ -97,9 +108,12 @@ function App() {
 
         const data = await response.json();
 
-        setCurrentUser(data);
-        localStorage.setItem('currentUser', JSON.stringify(data));
-        localStorage.setItem('token', data.token);
+        // Extract data from the response
+        const userData = data.data || data;
+
+        setCurrentUser(userData);
+        localStorage.setItem('currentUser', JSON.stringify(userData));
+        localStorage.setItem('token', userData.token);
 
         setShowAuthPopup(false);
 
@@ -108,14 +122,6 @@ function App() {
         alert('Registration error: ' + error.message);
       }
     }
-  };
-
-  const handleLogout = () => {
-    setCurrentUser(null);
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('token');
-    setLists([]);
-    setShowAuthPopup(true);
   };
 
   const addList = () => {
@@ -195,17 +201,17 @@ function App() {
     }
 
     if (!list?.title.trim()) {
-      alert('List title is required!');
+      alert('List title is required');
       return;
     }
 
     for (const task of list.subtasks) {
       if (!task.title.trim()) {
-        alert('All task titles are required!');
+        alert('All task titles are required');
         return;
       }
       if (!task.description.trim()) {
-        alert('All task descriptions are required!');
+        alert('All task descriptions are required');
         return;
       }
     }
@@ -299,7 +305,7 @@ function App() {
         return l;
       }));
 
-      alert('List and all tasks saved successfully!');
+      alert('List and all tasks saved successfully');
     } catch (error) {
       console.error('Error saving:', error);
       alert('Error saving: ' + error.message);

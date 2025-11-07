@@ -1,33 +1,23 @@
-// import jwt from 'jsonwebtoken';
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const { AppError } = require('./errorHandler.js');
 const JWT_SECRET = process.env.JWT_SECRET;
-//Recuperer le token
-const auth_middleware = (req, _res, next) => {
 
-    try{
-         const token = req.headers.authorization?.split(' ')[1];
-    // const token = req.headers['authorization'];
-    // jwt.verify(token, JWT_SECRET, (_err, decoded) => {
-    //     req.user = decoded;
-    //     next();
-    // });
-
-
-if (!token) {
-    return res.status(401).json({message: 'Token not find'});
-}
-//Vérifier et decoder le token
-const deconded = jwt.verify(token,JWT_SECRET)
-
-//Ajouter les infos des utilisateurs
-req.user = deconded; {id,name,firstname,password,email,user_id,list_id,list_name,title,description,status,position,created_at,
-  updated_at,due_time}
-
-//Naviguer de route en routes
-next()
-    }catch(err){
-        return res.status(401).json({message: 'Token invalid'});
+const auth_middleware = (req, res, next) => {
+    const token = req.headers['authorization'];
+    
+    if (!token) {
+        return next(new AppError('No token provided', 401));
     }
+    
+    const tokenValue = token.startsWith('Bearer ') ? token.slice(7) : token;
+    
+    jwt.verify(tokenValue, JWT_SECRET, (err, decoded) => {
+        if (err) {
+            return next(new AppError('Invalid or expired token', 401));
+        }
+        req.user = decoded;
+        next();
+    });
 };
-// export default auth_middleware;
-module.exports = auth_middleware
+
+module.exports = auth_middleware;
