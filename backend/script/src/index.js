@@ -34,6 +34,7 @@ console.log('DB_NAME:', process.env.DB_NAME);
 console.log('DB_USER:', process.env.DB_USER);
 console.log('PORT:', port);
 
+
 // Middleware
 app.use(cors());
 app.use(express.json());
