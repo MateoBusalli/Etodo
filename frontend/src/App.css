@@ -1,329 +1,186 @@
-.text {
+body {
   font-family: 'Inter', sans-serif;
+  background-color: #181B28;
+  margin: 0;
+  padding: 0;
 }
 
-h1,
-h2,
-h3 {
+h1, h2, h3 {
   font-family: 'Poppins', sans-serif;
 }
 
-.blue-color {
-  background-color: #35C0EB;
-}
-
-.white-color {
-  background-color: #EAEBE6;
-}
-
-.darkgrey-color {
+.ant-layout {
   background-color: #181B28;
 }
 
-.greyblue-color {
+.ant-layout-header {
   background-color: #2e344a;
+  padding: 0 50px;
 }
 
-hr.blue-color {
-  border: 1px solid #35C0EB;
-  width: 80%;
+.ant-layout-content {
+  background-color: #181B28;
 }
 
-.center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.white_font {
-  color: white;
-}
-
-.box_background_color {
-  border-radius: 10px;
-  padding: 20px;
-  margin: 10px;
-}
-
-.app-wrapper {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 80px;
-}
-
-.content {
-  flex: 1;
-}
-
-footer {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  z-index: 100;
-}
-
-.add-task-btn {
-  background-color: #35C0EB;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 15px 30px;
-  font-size: 16px;
-  font-family: 'Poppins', sans-serif;
-  cursor: pointer;
-  margin: 20px;
-  transition: background-color 0.3s;
-}
-
-.add-task-btn:hover {
-  background-color: #2a9dc0;
-}
-
-.add-task-btn.saved {
-  background-color: #4CAF50;
-}
-
-.add-task-btn.saved:hover {
-  background-color: #45a049;
-}
-
-.task-card {
-  display: flex;
-  flex-direction: column;
-  border: 2px solid #35C0EB;
-  background-color: #cadeeb;
-  gap: 10px;
-}
-
-.task-title-input {
-  font-family: 'Poppins', sans-serif;
-  font-size: 20px;
-  font-weight: 600;
-  border: none;
-  background-color: transparent;
-  padding: 5px;
-  outline: none;
-}
-
-.task-title-input:focus {
-  border-bottom: 2px solid #35C0EB;
-}
-
-.task-desc-input {
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  border: none;
-  background-color: transparent;
-  padding: 5px;
-  resize: vertical;
-  min-height: 60px;
-  outline: none;
-}
-
-.task-desc-input:focus {
-  border: 1px solid #35C0EB;
-  border-radius: 5px;
-}
-
-.delete-btn {
-  background-color: #ff4444;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 8px 15px;
-  cursor: pointer;
-  align-self: flex-end;
-  font-family: 'Poppins', sans-serif;
-}
-
-.delete-btn:hover {
-  background-color: #cc0000;
-}
-
-.update-btn {
-  background-color: #35C0EB;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 8px 15px;
-  cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-  transition: background-color 0.3s;
-}
-
-.update-btn:hover {
-  background-color: #2a9dc0;
-}
-
-.update-btn.saved {
-  background-color: #4CAF50;
-}
-
-.update-btn.saved:hover {
-  background-color: #45a049;
-}
-
-.button-group {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-.auth-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #181b28f2;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.auth-popup {
-  position: relative;
+.ant-layout-footer {
   background-color: #2e344a;
-  padding: 40px;
+  color: #ffffff;
   border-radius: 15px;
-  box-shadow: 0 10px 40px #35C0EB;
-  width: 90%;
-  max-width: 400px;
+  margin: 20px 50px;
+  width: auto;
 }
 
-.auth-popup h2 {
-  color: white;
-  text-align: center;
-  margin-bottom: 30px;
-  font-family: 'Poppins', sans-serif;
-}
-
-.auth-popup form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.auth-input {
-  padding: 12px 15px;
-  border: 2px solid #35C0EB;
-  border-radius: 8px;
-  font-size: 16px;
-  font-family: 'Inter', sans-serif;
+.ant-card {
   background-color: #181B28;
-  color: white;
-  outline: none;
-  transition: border-color 0.3s;
+  border: 2px solid #35C0EB;
+  border-radius: 10px;
 }
 
-.auth-input:focus {
+.ant-card-head {
+  border-bottom: none !important;
+  background-color: #181B28;
+}
+
+.ant-card-inner {
+  background-color: #181B28;
+}
+
+.ant-btn-primary {
+  background-color: #35C0EB;
+  border-color: #35C0EB;
+}
+
+.ant-btn-primary:hover {
+  background-color: #2a9dc0;
   border-color: #2a9dc0;
 }
 
-.auth-input::placeholder {
-  color: #999;
+.ant-modal-content {
+  background-color: #1a1d2e !important;
+  border-radius: 15px;
+  padding: 0;
 }
 
-.auth-btn {
-  background-color: #35C0EB;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 12px;
-  font-size: 16px;
-  font-family: 'Poppins', sans-serif;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  margin-top: 10px;
+.ant-modal-header {
+  background-color: #1a1d2e !important;
+  border-bottom: 1px solid #35C0EB;
+  border-radius: 15px 15px 0 0;
+  padding: 20px 24px;
 }
 
-.auth-btn:hover {
-  background-color: #2a9dc0;
+.ant-modal-title {
+  color: #ffffff !important;
+  font-size: 24px;
+  font-weight: bold;
 }
 
-.auth-toggle {
-  text-align: center;
-  color: #ccc;
-  margin-top: 20px;
-  font-family: 'Inter', sans-serif;
+.ant-modal-close,
+.ant-modal-close-x,
+.ant-modal-wrap .ant-modal-close {
+  color: #ffffff !important;
 }
 
-.auth-toggle span {
+.ant-modal-close:hover,
+.ant-modal-close-x:hover,
+.ant-modal-wrap .ant-modal-close:hover {
+  color: #35C0EB !important;
+}
+
+.ant-modal-body {
+  background-color: #1a1d2e !important;
+  padding: 24px;
+}
+
+.ant-modal-footer {
+  background-color: #1a1d2e !important;
+  border-top: none;
+}
+
+.ant-form-item-label > label {
+  color: #35C0EB !important;
+  font-weight: 500;
+}
+
+.ant-form-item-label > label.ant-form-item-required::before {
+  color: #ff4444 !important;
+}
+
+.ant-input, 
+.ant-input-password,
+.ant-input-password input {
+  background-color: #0f1117 !important;
+  color: #ffffff !important;
+  border: 2px solid #35C0EB;
+}
+
+.ant-input::placeholder,
+.ant-input-password input::placeholder {
+  color: #888 !important;
+}
+
+.ant-input:hover,
+.ant-input-password:hover {
+  border-color: #35C0EB;
+}
+
+.ant-input:focus, 
+.ant-input-focused,
+.ant-input-password:focus,
+.ant-input-password-focused {
+  border-color: #2a9dc0 !important;
+  box-shadow: 0 0 0 2px #35c0eb33;
+  background-color: #0f1117 !important;
+  color: white !important;
+}
+
+.ant-input-password .anticon {
   color: #35C0EB;
-  cursor: pointer;
-  text-decoration: underline;
 }
 
-.auth-toggle span:hover {
+.ant-modal-body div[style*="textAlign"],
+.ant-modal-body div {
+  color: #ffffff !important;
+}
+
+.ant-btn-link {
+  color: #35C0EB;
+}
+
+.ant-btn-link:hover {
   color: #2a9dc0;
 }
 
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
+.ant-btn.ant-btn-update,
+button.ant-btn-update {
+  background-color: #35C0EB !important;
+  border-color: #35C0EB !important;
+  color: #ffffff !important;
 }
 
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 15px;
+.ant-btn.ant-btn-update:hover,
+button.ant-btn-update:hover {
+  background-color: #2a9dc0 !important;
+  border-color: #2a9dc0 !important;
 }
 
-.logout-btn {
-  background-color: #ff4444;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 8px 15px;
-  cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-  transition: background-color 0.3s;
+.ant-btn-default {
+  background-color: #28a745 !important;
+  border-color: #28a745 !important;
+  color: #ffffff !important;
 }
 
-.logout-btn:hover {
-  background-color: #cc0000;
+.ant-btn-default:hover {
+  background-color: #218838 !important;
+  border-color: #218838 !important;
 }
 
-.login-btn {
-  background-color: #35C0EB;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 8px 20px;
-  cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-  transition: background-color 0.3s;
-  font-size: 16px;
+.ant-btn-dangerous {
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+  color: #ffffff !important;
 }
 
-.login-btn:hover {
-  background-color: #2a9dc0;
-}
-
-.close-popup-btn {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  background: none;
-  border: none;
-  color: white;
-  font-size: 30px;
-  cursor: pointer;
-  line-height: 1;
-  padding: 0;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.3s;
-}
-
-.close-popup-btn:hover {
-  color: #35C0EB;
+.ant-btn-dangerous:hover {
+  background-color: #c82333 !important;
+  border-color: #c82333 !important;
 }

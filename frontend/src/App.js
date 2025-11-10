@@ -1,40 +1,35 @@
 import { useState, useEffect, useCallback } from 'react';
 import './App.css';
+import { Button, Input, Card, Space, Modal, Form, Typography, Layout } from 'antd';
+import { PlusOutlined, DeleteOutlined, LogoutOutlined, LoginOutlined } from '@ant-design/icons';
+
+const { TextArea } = Input;
+const { Title, Text } = Typography;
+const { Header, Content, Footer } = Layout;
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [showAuthPopup, setShowAuthPopup] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
-
-  const [authForm, setAuthForm] = useState({
-    name: '',
-    firstname: '',
-    email: '',
-    password: ''
-  });
-
+  const [authForm, setAuthForm] = useState({ name: '', firstname: '', email: '', password: '' });
   const [lists, setLists] = useState([]);
   const [nextId, setNextId] = useState(1);
 
   const handleLogout = useCallback(() => {
     setCurrentUser(null);
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('token');
+    localStorage.clear();
     setLists([]);
     setShowAuthPopup(true);
   }, []);
 
   const loadUserLists = useCallback(async (token) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/lists`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+      const response = await fetch(`http://127.0.0.1:3001/api/lists`, {
+        headers: { 'Authorization': `Bearer ${token}` }
       });
 
       if (response.ok) {
-        const userLists = await response.json();
-        setLists(userLists);
+        setLists(await response.json());
       } else if (response.status === 401) {
         handleLogout();
       }
@@ -46,148 +41,86 @@ function App() {
   useEffect(() => {
     const savedUser = localStorage.getItem('currentUser');
     const token = localStorage.getItem('token');
-
     if (savedUser && token) {
       setCurrentUser(JSON.parse(savedUser));
       loadUserLists(token);
     }
   }, [loadUserLists]);
 
-  const handleAuthSubmit = async (e) => {
-    e.preventDefault();
+  const handleAuthSubmit = async () => {
+    const endpoint = isLogin ? 'login' : 'register';
+    const body = isLogin 
+      ? { email: authForm.email, password: authForm.password }
+      : authForm;
 
-    if (isLogin) {
-      try {
-        const response = await fetch('http://localhost:3001/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email: authForm.email,
-            password: authForm.password
-          })
-        });
+    if (!isLogin && (!authForm.name || !authForm.firstname || !authForm.email || !authForm.password)) {
+      alert('All fields are required for registration');
+      return;
+    }
 
-        if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.message || 'Login failed');
-        }
+    try {
+      const response = await fetch(`http://127.0.0.1:3001/api/auth/${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
 
-        const data = await response.json();
-
-        // Extract data from the response
-        const userData = data.data || data;
-
-        setCurrentUser(userData);
-        localStorage.setItem('currentUser', JSON.stringify(userData));
-        localStorage.setItem('token', userData.token);
-
-        setShowAuthPopup(false);
-        loadUserLists(userData.token);
-
-        setAuthForm({ name: '', firstname: '', email: '', password: '' });
-      } catch (error) {
-        alert('Login error: ' + error.message);
-      }
-    } else {
-      if (!authForm.name || !authForm.firstname || !authForm.email || !authForm.password) {
-        alert('All fields are required for registration');
-        return;
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || `${endpoint} failed`);
       }
 
-      try {
-        const response = await fetch('http://localhost:3001/api/auth/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(authForm)
-        });
+      const data = await response.json();
+      const userData = data.data || data;
 
-        if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.message || 'Registration failed');
-        }
+      setCurrentUser(userData);
+      localStorage.setItem('currentUser', JSON.stringify(userData));
+      localStorage.setItem('token', userData.token);
+      setShowAuthPopup(false);
+      setAuthForm({ name: '', firstname: '', email: '', password: '' });
 
-        const data = await response.json();
-
-        // Extract data from the response
-        const userData = data.data || data;
-
-        setCurrentUser(userData);
-        localStorage.setItem('currentUser', JSON.stringify(userData));
-        localStorage.setItem('token', userData.token);
-
-        setShowAuthPopup(false);
-
-        setAuthForm({ name: '', firstname: '', email: '', password: '' });
-      } catch (error) {
-        alert('Registration error: ' + error.message);
-      }
+      if (isLogin) loadUserLists(userData.token);
+    } catch (error) {
+      alert(`${endpoint} error: ${error.message}`);
     }
   };
 
   const addList = () => {
-    const newList = {
-      id: -nextId,
-      title: '',
-      description: '',
-      subtasks: [],
-      isSaved: false
-    };
-    setLists([...lists, newList]);
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Please login first');
+      setShowAuthPopup(true);
+      return;
+    }
+    setLists([...lists, { id: -nextId, title: '', description: '', subtasks: [], isSaved: false }]);
     setNextId(nextId + 1);
   };
 
   const addSubtask = (listId) => {
-    setLists(lists.map(list => {
-      if (list.id === listId) {
-        const newTask = {
-          id: -nextId,
-          title: '',
-          description: '',
-          isSaved: false
-        };
-        return {
-          ...list,
-          subtasks: [...list.subtasks, newTask]
-        };
-      }
-      return list;
-    }));
+    setLists(lists.map(list => 
+      list.id === listId 
+        ? { ...list, subtasks: [...list.subtasks, { id: -nextId, title: '', description: '', isSaved: false }] }
+        : list
+    ));
     setNextId(nextId + 1);
   };
 
   const updateList = (id, field, value) => {
-    setLists(lists.map(list => {
-      if (list.id === id) {
-        return {
-          ...list,
-          [field]: value,
-          isSaved: false
-        };
-      }
-      return list;
-    }));
+    setLists(lists.map(list => list.id === id ? { ...list, [field]: value, isSaved: false } : list));
   };
 
   const updateSubtask = (listId, subId, field, value) => {
-    setLists(lists.map(list => {
-      if (list.id === listId) {
-        return {
-          ...list,
-          isSaved: false,
-          subtasks: list.subtasks.map(task => {
-            if (task.id === subId) {
-              return {
-                ...task,
-                [field]: value,
-                isSaved: false
-              };
-            }
-            return task;
-          })
-        };
-      }
-      return list;
-    }));
+    setLists(lists.map(list => 
+      list.id === listId 
+        ? { 
+            ...list, 
+            isSaved: false,
+            subtasks: list.subtasks.map(task => 
+              task.id === subId ? { ...task, [field]: value, isSaved: false } : task
+            )
+          }
+        : list
+    ));
   };
 
   const saveListAndTasks = async (listId) => {
@@ -206,306 +139,279 @@ function App() {
     }
 
     for (const task of list.subtasks) {
-      if (!task.title.trim()) {
-        alert('All task titles are required');
-        return;
-      }
-      if (!task.description.trim()) {
-        alert('All task descriptions are required');
+      if (!task.title.trim() || !task.description.trim()) {
+        alert('All task titles and descriptions are required');
         return;
       }
     }
 
     try {
-      let savedListId = listId;
+      const isNewList = listId < 0;
+      const listUrl = isNewList ? 'http://127.0.0.1:3001/api/lists' : `http://127.0.0.1:3001/api/lists/${listId}`;
+      
+      const listResponse = await fetch(listUrl, {
+        method: isNewList ? 'POST' : 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ title: list.title, description: list.description || '' })
+      });
 
-      if (listId < 0) {
-        const listResponse = await fetch('http://localhost:3001/api/lists', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            title: list.title,
-            description: list.description || ''
-          })
-        });
-
-        if (!listResponse.ok) {
-          const error = await listResponse.json();
-          throw new Error(error.message || 'Failed to save list');
-        }
-
-        const listData = await listResponse.json();
-        savedListId = listData.id;
-      } else {
-        const listResponse = await fetch(`http://localhost:3001/api/lists/${listId}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            title: list.title,
-            description: list.description || ''
-          })
-        });
-
-        if (!listResponse.ok) {
-          const error = await listResponse.json();
-          throw new Error(error.message || 'Failed to update list');
-        }
+      if (!listResponse.ok) {
+        throw new Error((await listResponse.json()).message || 'Failed to save list');
       }
+
+      const savedListId = isNewList ? (await listResponse.json()).id : listId;
 
       const savedSubtasks = [];
       for (const task of list.subtasks) {
         const isNewTask = task.id < 0;
-        const method = isNewTask ? 'POST' : 'PUT';
-        const url = isNewTask
-          ? 'http://localhost:3001/api/todos'
-          : `http://localhost:3001/api/todos/${task.id}`;
+        const taskUrl = isNewTask ? 'http://127.0.0.1:3001/api/todos' : `http://127.0.0.1:3001/api/todos/${task.id}`;
 
-        const taskResponse = await fetch(url, {
-          method: method,
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            title: task.title,
-            description: task.description,
-            list_id: savedListId,
-            status: false
-          })
+        const taskResponse = await fetch(taskUrl, {
+          method: isNewTask ? 'POST' : 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ title: task.title, description: task.description, list_id: savedListId, status: false })
         });
 
         if (!taskResponse.ok) {
-          const error = await taskResponse.json();
-          throw new Error(error.message || 'Failed to save task');
+          throw new Error((await taskResponse.json()).message || 'Failed to save task');
         }
 
-        const taskData = await taskResponse.json();
-        savedSubtasks.push({
-          ...task,
-          id: taskData.id,
-          isSaved: true
-        });
+        savedSubtasks.push({ ...task, id: (await taskResponse.json()).id, isSaved: true });
       }
 
-      setLists(lists.map(l => {
-        if (l.id === listId) {
-          return {
-            ...l,
-            id: savedListId,
-            isSaved: true,
-            subtasks: savedSubtasks
-          };
-        }
-        return l;
-      }));
+      setLists(lists.map(l => 
+        l.id === listId ? { ...l, id: savedListId, isSaved: true, subtasks: savedSubtasks } : l
+      ));
 
       alert('List and all tasks saved successfully');
     } catch (error) {
-      console.error('Error saving:', error);
       alert('Error saving: ' + error.message);
     }
   };
 
-  const deleteList = async (id) => {
-    const token = localStorage.getItem('token');
-
-    if (id > 0 && token) {
-      try {
-        await fetch(`http://localhost:3001/api/lists/${id}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-      } catch (error) {
-        console.error('Error deleting list:', error);
-      }
+  const deleteList = async (listId) => {
+    if (listId < 0) {
+      setLists(lists.filter(l => l.id !== listId));
+      return;
     }
-    setLists(lists.filter(list => list.id !== id));
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Please login first');
+      setShowAuthPopup(true);
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://127.0.0.1:3001/api/lists/${listId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!response.ok) throw new Error((await response.json()).message || 'Failed to delete list');
+
+      setLists(lists.filter(l => l.id !== listId));
+      alert('List deleted successfully');
+    } catch (error) {
+      alert('Error deleting: ' + error.message);
+    }
   };
 
-  const deleteSubtask = async (listId, subId) => {
+  const deleteSubtask = async (listId, taskId) => {
     const token = localStorage.getItem('token');
-
-    if (subId > 0 && token) {
-      try {
-        await fetch(`http://localhost:3001/api/todos/${subId}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-      } catch (error) {
-        console.error('Error deleting task:', error);
-      }
+    if (!token) {
+      alert('Please login first');
+      setShowAuthPopup(true);
+      return;
     }
-    setLists(lists.map(list => {
-      if (list.id === listId) {
-        return {
-          ...list,
-          subtasks: list.subtasks.filter(task => task.id !== subId)
-        };
-      }
-      return list;
-    }));
+
+    try {
+      const response = await fetch(`http://127.0.0.1:3001/api/todos/${taskId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!response.ok) throw new Error((await response.json()).message || 'Failed to delete task');
+
+      setLists(lists.map(l => 
+        l.id === listId ? { ...l, subtasks: l.subtasks.filter(t => t.id !== taskId) } : l
+      ));
+      alert('Task deleted successfully');
+    } catch (error) {
+      alert('Error deleting: ' + error.message);
+    }
   };
+
+  const authModalTitle = isLogin ? 'Login' : 'Register';
+  const submitButtonText = isLogin ? 'Login' : 'Register';
+  const toggleText = isLogin ? "Don't have an account? " : "Already have an account? ";
+  const toggleButtonText = isLogin ? 'Register' : 'Login';
+
+  const user = currentUser?.firstname || currentUser?.name;
+  const saveButtonType = list => list.isSaved ? 'default' : 'primary';
+  const saveButtonText = list => list.isSaved ? 'List & Tasks Saved' : 'Update List';
 
   return (
-    <div className="app-wrapper">
-      {showAuthPopup && (
-        <div className="auth-overlay">
-          <div className="auth-popup">
-            <button onClick={() => setShowAuthPopup(false)} className="close-popup-btn">×</button>
-            <h2>{isLogin ? 'Login' : 'Register'}</h2>
-            <form onSubmit={handleAuthSubmit}>
-              {!isLogin && (
-                <>
-                  <input
-                    type="text"
-                    placeholder="Username"
-                    value={authForm.name}
-                    onChange={(e) => setAuthForm({ ...authForm, name: e.target.value })}
-                    className="auth-input"
-                  />
-                  <input
-                    type="text"
-                    placeholder="First Name"
-                    value={authForm.firstname}
-                    onChange={(e) => setAuthForm({ ...authForm, firstname: e.target.value })}
-                    className="auth-input"
-                  />
-                </>
-              )}
-              <input
-                type="email"
-                placeholder="Email"
-                value={authForm.email}
-                onChange={(e) => setAuthForm({ ...authForm, email: e.target.value })}
-                className="auth-input"
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                value={authForm.password}
-                onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })}
-                className="auth-input"
-              />
-              <button type="submit" className="auth-btn">
-                {isLogin ? 'Login' : 'Register'}
-              </button>
-            </form>
-            <p className="auth-toggle">
-              {isLogin ? "Don't have an account? " : "Already have an account? "}
-              <span onClick={() => setIsLogin(!isLogin)}>
-                {isLogin ? 'Register' : 'Login'}
-              </span>
-            </p>
-          </div>
-        </div>
-      )}
+    <Layout style={{ minHeight: '100vh' }}>
 
-      <div className="content">
-        <header className="box_background_color greyblue-color">
-          <div className="header-content">
-            <h1 className="center white_font">DoNext</h1>
-            {currentUser ? (
-              <div className="user-info">
-                <span className="white_font">Welcome, {currentUser?.firstname || currentUser?.name}!</span>
-                <button onClick={handleLogout} className="logout-btn">Logout</button>
-              </div>
-            ) : (
-              <button onClick={() => setShowAuthPopup(true)} className="login-btn">Login</button>
-            )}
-          </div>
-        </header>
+      <Modal
+        title={authModalTitle}
+        open={showAuthPopup}
+        onCancel={() => setShowAuthPopup(false)}
+        footer={null}
+      >
+        <Form onFinish={handleAuthSubmit} layout="vertical">
 
-        <h2 className="center white_font">Your Tasks</h2>
-        <hr className="blue-color" />
+          {!isLogin && (
+            <>
+              <Form.Item label="Username" required>
+                <Input
+                  placeholder="Username"
+                  value={authForm.name}
+                  onChange={(e) => setAuthForm({ ...authForm, name: e.target.value })}
+                />
+              </Form.Item>
 
-        <div className="center">
-          <button onClick={addList} className="add-task-btn">
-            + Add List
-          </button>
-        </div>
+              <Form.Item label="First Name" required>
+                <Input
+                  placeholder="First Name"
+                  value={authForm.firstname}
+                  onChange={(e) => setAuthForm({ ...authForm, firstname: e.target.value })}
+                />
+              </Form.Item>
+            </>
+          )}
 
-        {lists.map((list) => (
-          <div key={list.id} className="box_background_color white-color task-card">
-            <input
-              type="text"
-              placeholder="List title..."
-              value={list.title}
-              onChange={(e) => updateList(list.id, 'title', e.target.value)}
-              className="task-title-input"
+          <Form.Item label="Email" required>
+            <Input
+              type="email"
+              placeholder="Email"
+              value={authForm.email}
+              onChange={(e) => setAuthForm({ ...authForm, email: e.target.value })}
             />
+          </Form.Item>
 
-            <div className="center">
-              <button
-                onClick={() => saveListAndTasks(list.id)}
-                className={`add-task-btn ${list.isSaved ? 'saved' : ''}`}
-                style={{ marginRight: '10px' }}
-              >
-                {list.isSaved ? 'List & Tasks Saved' : 'Update List'}
-              </button>
+          <Form.Item label="Password" required>
+            <Input.Password
+              placeholder="Password"
+              value={authForm.password}
+              onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })}
+            />
+          </Form.Item>
 
-              <button
-                onClick={() => addSubtask(list.id)}
-                className="add-task-btn"
-              >
-                + Add Task
-              </button>
-            </div>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block>
+              {submitButtonText}
+            </Button>
+          </Form.Item>
 
-            {list.subtasks.map((task) => (
-              <div key={task.id} className="box_background_color white-color task-card">
-                <input
-                  type="text"
-                  placeholder="Task title..."
-                  value={task.title}
-                  onChange={(e) => updateSubtask(list.id, task.id, 'title', e.target.value)}
-                  className="task-title-input"
-                />
-
-                <textarea
-                  placeholder="Task description..."
-                  value={task.description}
-                  onChange={(e) => updateSubtask(list.id, task.id, 'description', e.target.value)}
-                  className="task-desc-input"
-                />
-
-                <div className="button-group">
-                  <button
-                    onClick={() => deleteSubtask(list.id, task.id)}
-                    className="delete-btn"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))}
-
-            <button
-              onClick={() => deleteList(list.id)}
-              className="delete-btn"
-            >
-              Delete List
-            </button>
+          <div style={{ textAlign: 'center' }}>
+            {toggleText}
+            <Button type="link" onClick={() => setIsLogin(!isLogin)}>
+              {toggleButtonText}
+            </Button>
           </div>
-        ))}
-      </div>
+        </Form>
+      </Modal>
 
-      <footer>
-        <hr className="blue-color" />
-        <div className="center white_font box_background_color greyblue-color">
-          Made by Hugo & Matéo - Epitech 2025
+      <Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Title level={2} style={{ color: 'white', margin: 0, fontFamily: 'Orbitron' }}>
+          ICEBERG
+        </Title>
+
+        {currentUser ? (
+          <Space>
+            <Text style={{ color: 'white' }}>
+              Welcome, {user}
+            </Text>
+            <Button type="primary" danger icon={<LogoutOutlined />} onClick={handleLogout}>
+              Logout
+            </Button>
+          </Space>
+        ) : (
+          <Button type="primary" icon={<LoginOutlined />} onClick={() => setShowAuthPopup(true)}>
+            Login
+          </Button>
+        )}
+      </Header>
+
+      <Content style={{ padding: '50px' }}>
+        <Title level={2} style={{ textAlign: 'center', color: 'white' }}>
+          YOUR ICETASKS
+        </Title>
+
+        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+          <Button type="primary" icon={<PlusOutlined />} onClick={addList} size="large">
+            Add List
+          </Button>
         </div>
-      </footer>
-    </div>
+
+        <Space direction="vertical" size="large" style={{ width: '100%' }}>
+          {lists.map((list) => {
+            const listTitleInput = (
+              <Input
+                placeholder="List title"
+                value={list.title}
+                onChange={(e) => updateList(list.id, 'title', e.target.value)}
+                variant="borderless"
+                style={{ fontSize: '16px', fontWeight: 'bold' }}
+              />
+            );
+
+            const listButtons = (
+              <Space>
+                <Button
+                  className="ant-btn-update"
+                  onClick={() => saveListAndTasks(list.id)}>
+                  {saveButtonText(list)}
+                </Button>
+                <Button icon={<PlusOutlined />} onClick={() => addSubtask(list.id)}>
+                  Add Task
+                </Button>
+                <Button danger icon={<DeleteOutlined />} onClick={() => deleteList(list.id)}>
+                  Delete List
+                </Button>
+              </Space>
+            );
+
+            return (
+              <Card key={list.id} title={listTitleInput} extra={listButtons}>
+                <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+                  {list.subtasks.map((task) => (
+                    <Card key={task.id} type="inner" size="small">
+                      <Space direction="vertical" style={{ width: '100%' }}>
+                        <Input
+                          placeholder="Task title..."
+                          value={task.title}
+                          onChange={(e) => updateSubtask(list.id, task.id, 'title', e.target.value)}
+                        />
+                        <TextArea
+                          placeholder="Task description..."
+                          value={task.description}
+                          onChange={(e) => updateSubtask(list.id, task.id, 'description', e.target.value)}
+                          rows={3}
+                        />
+                        <Button
+                          danger
+                          icon={<DeleteOutlined />}
+                          onClick={() => deleteSubtask(list.id, task.id)}
+                        >
+                          Delete
+                        </Button>
+                      </Space>
+                    </Card>
+                  ))}
+                </Space>
+              </Card>
+            );
+          })}
+        </Space>
+      </Content>
+
+      <Footer style={{ textAlign: 'center' }}>
+        Made by Hugo & Matéo - Epitech 2025
+      </Footer>
+    </Layout>
   );
 }
 
