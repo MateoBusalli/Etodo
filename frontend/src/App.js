@@ -408,6 +408,7 @@ function App() {
         </Space>
       </Content>
 
+
       <Footer style={{ textAlign: 'center' }}>
         Made by Hugo & Matéo - Epitech 2025
       </Footer>
