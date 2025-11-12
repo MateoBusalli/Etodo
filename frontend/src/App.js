@@ -287,10 +287,8 @@ function App() {
 
 
   const removeList = async (listId) => {
-    // Add fade-out animation
     setDeletingListIds([...deletingListIds, listId]);
-    
-    // Wait for animation to complete
+
     setTimeout(async () => {
       if (listId < 0) {
         setLists(lists.filter(l => l.id !== listId));
@@ -325,14 +323,12 @@ function App() {
         showAlert('Error deleting: ' + error.message, 'error');
         setDeletingListIds(deletingListIds.filter(id => id !== listId));
       }
-    }, 500); // Match the fadeOut animation duration
+    }, 500);
   };
 
   const removeTask = async (listId, taskId) => {
-    // Add fade-out animation
     setDeletingTaskIds([...deletingTaskIds, taskId]);
-    
-    // Wait for animation to complete
+
     setTimeout(async () => {
       const token = localStorage.getItem('token');
 
@@ -377,7 +373,7 @@ function App() {
         showAlert('Error deleting: ' + error.message, 'error');
         setDeletingTaskIds(deletingTaskIds.filter(id => id !== taskId));
       }
-    }, 500); // Match the fadeOut animation duration
+    }, 500);
   };
 
   const authModalTitle = isLogin ? 'Login' : 'Register';
