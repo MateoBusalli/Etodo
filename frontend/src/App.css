@@ -134,7 +134,7 @@ h1, h2, h3 {
 }
 
 .ant-input-password .anticon {
-  color: #35C0EB;
+  color: #35C0EB !important;
 }
 
 .ant-modal-body div[style*="textAlign"],
