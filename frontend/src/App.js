@@ -1,60 +1,96 @@
 import { useState, useEffect, useCallback } from 'react';
 import './App.css';
-import { Button, Input, Card, Space, Modal, Form, Typography, Layout } from 'antd';
-import { PlusOutlined, DeleteOutlined, LogoutOutlined, LoginOutlined } from '@ant-design/icons';
+import { Button, Input, Card, Space, Modal, Form, Typography, Layout, Alert, Row, Col, Divider, Empty } from 'antd';
+import { PlusOutlined, DeleteOutlined, LogoutOutlined, LoginOutlined, SaveOutlined, CheckCircleOutlined } from '@ant-design/icons';
+
 
 const { TextArea } = Input;
 const { Title, Text } = Typography;
 const { Header, Content, Footer } = Layout;
+
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [showAuthPopup, setShowAuthPopup] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [authForm, setAuthForm] = useState({ name: '', firstname: '', email: '', password: '' });
+
+
   const [lists, setLists] = useState([]);
   const [nextId, setNextId] = useState(1);
+  const [deletingListIds, setDeletingListIds] = useState([]);
+  const [deletingTaskIds, setDeletingTaskIds] = useState([]);
 
-  const handleLogout = useCallback(() => {
+
+  const [alertConfig, setAlertConfig] = useState(null);
+  const [isAlertExiting, setIsAlertExiting] = useState(false);
+
+
+  const showAlert = (message, type = 'info') => {
+    setAlertConfig({ message, type });
+    setIsAlertExiting(false);
+    setTimeout(() => {
+      setIsAlertExiting(true);
+      setTimeout(() => {
+        setAlertConfig(null);
+        setIsAlertExiting(false);
+      }, 300);
+    }, 4000);
+  };
+
+  const closeAlert = () => {
+    setIsAlertExiting(true);
+    setTimeout(() => {
+      setAlertConfig(null);
+      setIsAlertExiting(false);
+    }, 300);
+  };
+
+
+  const logout = useCallback(() => {
     setCurrentUser(null);
     localStorage.clear();
     setLists([]);
     setShowAuthPopup(true);
   }, []);
 
-  const loadUserLists = useCallback(async (token) => {
+
+  const loadLists = useCallback(async (token) => {
     try {
-      const response = await fetch(`http://127.0.0.1:3001/api/lists`, {
+      const response = await fetch('http://127.0.0.1:3001/api/lists', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
       if (response.ok) {
         setLists(await response.json());
       } else if (response.status === 401) {
-        handleLogout();
+        logout();
       }
     } catch (error) {
       console.error('Error loading lists:', error);
     }
-  }, [handleLogout]);
+  }, [logout]);
+
 
   useEffect(() => {
     const savedUser = localStorage.getItem('currentUser');
     const token = localStorage.getItem('token');
+
     if (savedUser && token) {
       setCurrentUser(JSON.parse(savedUser));
-      loadUserLists(token);
+      loadLists(token);
     }
-  }, [loadUserLists]);
+  }, [loadLists]);
 
-  const handleAuthSubmit = async () => {
+
+  const submitAuth = async () => {
     const endpoint = isLogin ? 'login' : 'register';
-    const body = isLogin 
+    const body = isLogin
       ? { email: authForm.email, password: authForm.password }
       : authForm;
 
     if (!isLogin && (!authForm.name || !authForm.firstname || !authForm.email || !authForm.password)) {
-      alert('All fields are required for registration');
+      showAlert('All fields are required for registration', 'error');
       return;
     }
 
@@ -79,180 +115,290 @@ function App() {
       setShowAuthPopup(false);
       setAuthForm({ name: '', firstname: '', email: '', password: '' });
 
-      if (isLogin) loadUserLists(userData.token);
+      if (isLogin) {
+        loadLists(userData.token);
+      }
     } catch (error) {
-      alert(`${endpoint} error: ${error.message}`);
+      showAlert(`${endpoint} error: ${error.message}`, 'error');
     }
   };
 
-  const addList = () => {
+
+  const createNewList = () => {
     const token = localStorage.getItem('token');
+
     if (!token) {
-      alert('Please login first');
+      showAlert('Please login first', 'warning');
       setShowAuthPopup(true);
       return;
     }
-    setLists([...lists, { id: -nextId, title: '', description: '', subtasks: [], isSaved: false }]);
+
+    const newList = {
+      id: -nextId,
+      title: '',
+      description: '',
+      subtasks: [],
+      isSaved: false
+    };
+
+    setLists([...lists, newList]);
     setNextId(nextId + 1);
   };
 
-  const addSubtask = (listId) => {
-    setLists(lists.map(list => 
-      list.id === listId 
-        ? { ...list, subtasks: [...list.subtasks, { id: -nextId, title: '', description: '', isSaved: false }] }
+
+  const createNewTask = (listId) => {
+    const newTask = {
+      id: -nextId,
+      title: '',
+      description: '',
+      isSaved: false
+    };
+
+    setLists(lists.map(list =>
+      list.id === listId
+        ? { ...list, subtasks: [...list.subtasks, newTask] }
         : list
     ));
+
     setNextId(nextId + 1);
   };
 
-  const updateList = (id, field, value) => {
-    setLists(lists.map(list => list.id === id ? { ...list, [field]: value, isSaved: false } : list));
-  };
 
-  const updateSubtask = (listId, subId, field, value) => {
-    setLists(lists.map(list => 
-      list.id === listId 
-        ? { 
-            ...list, 
-            isSaved: false,
-            subtasks: list.subtasks.map(task => 
-              task.id === subId ? { ...task, [field]: value, isSaved: false } : task
-            )
-          }
+  const updateListField = (listId, fieldName, newValue) => {
+    setLists(lists.map(list =>
+      list.id === listId
+        ? { ...list, [fieldName]: newValue, isSaved: false }
         : list
     ));
   };
 
-  const saveListAndTasks = async (listId) => {
+
+  const updateTaskField = (listId, taskId, fieldName, newValue) => {
+    setLists(lists.map(list =>
+      list.id === listId
+        ? {
+          ...list,
+          isSaved: false,
+          subtasks: list.subtasks.map(task =>
+            task.id === taskId
+              ? { ...task, [fieldName]: newValue, isSaved: false }
+              : task
+          )
+        }
+        : list
+    ));
+  };
+
+
+  const saveList = async (listId) => {
     const list = lists.find(l => l.id === listId);
     const token = localStorage.getItem('token');
 
     if (!token) {
-      alert('Please login first');
+      showAlert('Please login first', 'warning');
       setShowAuthPopup(true);
       return;
     }
 
     if (!list?.title.trim()) {
-      alert('List title is required');
+      showAlert('List title is required', 'error');
       return;
     }
 
     for (const task of list.subtasks) {
       if (!task.title.trim() || !task.description.trim()) {
-        alert('All task titles and descriptions are required');
+        showAlert('All task titles and descriptions are required', 'error');
         return;
       }
     }
 
     try {
       const isNewList = listId < 0;
-      const listUrl = isNewList ? 'http://127.0.0.1:3001/api/lists' : `http://127.0.0.1:3001/api/lists/${listId}`;
-      
-      const listResponse = await fetch(listUrl, {
+      const listEndpoint = isNewList
+        ? 'http://127.0.0.1:3001/api/lists'
+        : `http://127.0.0.1:3001/api/lists/${listId}`;
+
+      const listResponse = await fetch(listEndpoint, {
         method: isNewList ? 'POST' : 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ title: list.title, description: list.description || '' })
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          title: list.title,
+          description: list.description || ''
+        })
       });
 
       if (!listResponse.ok) {
-        throw new Error((await listResponse.json()).message || 'Failed to save list');
+        const errorData = await listResponse.json();
+        throw new Error(errorData.message || 'Failed to save list');
       }
 
-      const savedListId = isNewList ? (await listResponse.json()).id : listId;
+      const listData = await listResponse.json();
+      const savedListId = isNewList ? listData.id : listId;
 
-      const savedSubtasks = [];
+      const savedTasks = [];
+
       for (const task of list.subtasks) {
         const isNewTask = task.id < 0;
-        const taskUrl = isNewTask ? 'http://127.0.0.1:3001/api/todos' : `http://127.0.0.1:3001/api/todos/${task.id}`;
+        const taskEndpoint = isNewTask
+          ? 'http://127.0.0.1:3001/api/todos'
+          : `http://127.0.0.1:3001/api/todos/${task.id}`;
 
-        const taskResponse = await fetch(taskUrl, {
+        const taskResponse = await fetch(taskEndpoint, {
           method: isNewTask ? 'POST' : 'PUT',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify({ title: task.title, description: task.description, list_id: savedListId, status: false })
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            title: task.title,
+            description: task.description,
+            list_id: savedListId,
+            status: false
+          })
         });
 
         if (!taskResponse.ok) {
-          throw new Error((await taskResponse.json()).message || 'Failed to save task');
+          const errorData = await taskResponse.json();
+          throw new Error(errorData.message || 'Failed to save task');
         }
 
-        savedSubtasks.push({ ...task, id: (await taskResponse.json()).id, isSaved: true });
+        const taskData = await taskResponse.json();
+        savedTasks.push({
+          ...task,
+          id: taskData.id,
+          isSaved: true
+        });
       }
 
-      setLists(lists.map(l => 
-        l.id === listId ? { ...l, id: savedListId, isSaved: true, subtasks: savedSubtasks } : l
+      setLists(lists.map(l =>
+        l.id === listId
+          ? { ...l, id: savedListId, isSaved: true, subtasks: savedTasks }
+          : l
       ));
 
-      alert('List and all tasks saved successfully');
+      showAlert('List and all tasks saved successfully', 'success');
     } catch (error) {
-      alert('Error saving: ' + error.message);
+      showAlert('Error saving: ' + error.message, 'error');
     }
   };
 
-  const deleteList = async (listId) => {
-    if (listId < 0) {
-      setLists(lists.filter(l => l.id !== listId));
-      return;
-    }
 
-    const token = localStorage.getItem('token');
-    if (!token) {
-      alert('Please login first');
-      setShowAuthPopup(true);
-      return;
-    }
+  const removeList = async (listId) => {
+    // Add fade-out animation
+    setDeletingListIds([...deletingListIds, listId]);
+    
+    // Wait for animation to complete
+    setTimeout(async () => {
+      if (listId < 0) {
+        setLists(lists.filter(l => l.id !== listId));
+        setDeletingListIds(deletingListIds.filter(id => id !== listId));
+        return;
+      }
 
-    try {
-      const response = await fetch(`http://127.0.0.1:3001/api/lists/${listId}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const token = localStorage.getItem('token');
 
-      if (!response.ok) throw new Error((await response.json()).message || 'Failed to delete list');
+      if (!token) {
+        showAlert('Please login first', 'warning');
+        setShowAuthPopup(true);
+        setDeletingListIds(deletingListIds.filter(id => id !== listId));
+        return;
+      }
 
-      setLists(lists.filter(l => l.id !== listId));
-      alert('List deleted successfully');
-    } catch (error) {
-      alert('Error deleting: ' + error.message);
-    }
+      try {
+        const response = await fetch(`http://127.0.0.1:3001/api/lists/${listId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to delete list');
+        }
+
+        setLists(lists.filter(l => l.id !== listId));
+        setDeletingListIds(deletingListIds.filter(id => id !== listId));
+        showAlert('List deleted successfully', 'success');
+      } catch (error) {
+        showAlert('Error deleting: ' + error.message, 'error');
+        setDeletingListIds(deletingListIds.filter(id => id !== listId));
+      }
+    }, 500); // Match the fadeOut animation duration
   };
 
-  const deleteSubtask = async (listId, taskId) => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      alert('Please login first');
-      setShowAuthPopup(true);
-      return;
-    }
+  const removeTask = async (listId, taskId) => {
+    // Add fade-out animation
+    setDeletingTaskIds([...deletingTaskIds, taskId]);
+    
+    // Wait for animation to complete
+    setTimeout(async () => {
+      const token = localStorage.getItem('token');
 
-    try {
-      const response = await fetch(`http://127.0.0.1:3001/api/todos/${taskId}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      if (!token) {
+        showAlert('Please login first', 'warning');
+        setShowAuthPopup(true);
+        setDeletingTaskIds(deletingTaskIds.filter(id => id !== taskId));
+        return;
+      }
 
-      if (!response.ok) throw new Error((await response.json()).message || 'Failed to delete task');
+      if (taskId < 0) {
+        setLists(prevLists => prevLists.map(l =>
+          l.id === listId
+            ? { ...l, subtasks: l.subtasks.filter(t => t.id !== taskId) }
+            : l
+        ));
+        setDeletingTaskIds(deletingTaskIds.filter(id => id !== taskId));
+        showAlert('Task removed', 'success');
+        return;
+      }
 
-      setLists(lists.map(l => 
-        l.id === listId ? { ...l, subtasks: l.subtasks.filter(t => t.id !== taskId) } : l
-      ));
-      alert('Task deleted successfully');
-    } catch (error) {
-      alert('Error deleting: ' + error.message);
-    }
+      try {
+        const response = await fetch(`http://127.0.0.1:3001/api/todos/${taskId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to delete task');
+        }
+
+        setLists(prevLists => prevLists.map(l =>
+          l.id === listId
+            ? { ...l, subtasks: l.subtasks.filter(t => t.id !== taskId) }
+            : l
+        ));
+
+        setDeletingTaskIds(deletingTaskIds.filter(id => id !== taskId));
+        showAlert('Task deleted successfully', 'success');
+      } catch (error) {
+        showAlert('Error deleting: ' + error.message, 'error');
+        setDeletingTaskIds(deletingTaskIds.filter(id => id !== taskId));
+      }
+    }, 500); // Match the fadeOut animation duration
   };
 
   const authModalTitle = isLogin ? 'Login' : 'Register';
-  const submitButtonText = isLogin ? 'Login' : 'Register';
-  const toggleText = isLogin ? "Don't have an account? " : "Already have an account? ";
-  const toggleButtonText = isLogin ? 'Register' : 'Login';
+  const authSubmitButtonText = isLogin ? 'Login' : 'Register';
+  const authToggleText = isLogin ? "Don't have an account? " : "Already have an account? ";
+  const authToggleButtonText = isLogin ? 'Register' : 'Login';
+  const userName = currentUser?.firstname || currentUser?.name;
+  const getListButtonText = (list) => list.isSaved ? 'List & Tasks Saved' : 'Update List';
 
-  const user = currentUser?.firstname || currentUser?.name;
-  const saveButtonType = list => list.isSaved ? 'default' : 'primary';
-  const saveButtonText = list => list.isSaved ? 'List & Tasks Saved' : 'Update List';
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout className="app-layout">
+      {alertConfig && (
+        <Alert
+          message={alertConfig.message}
+          type={alertConfig.type}
+          closable
+          onClose={closeAlert}
+          className={`custom-alert-container ${isAlertExiting ? 'custom-alert-exit' : 'custom-alert'}`}
+        />
+      )}
 
       <Modal
         title={authModalTitle}
@@ -260,7 +406,7 @@ function App() {
         onCancel={() => setShowAuthPopup(false)}
         footer={null}
       >
-        <Form onFinish={handleAuthSubmit} layout="vertical">
+        <Form onFinish={submitAuth} layout="vertical">
 
           {!isLogin && (
             <>
@@ -301,30 +447,30 @@ function App() {
 
           <Form.Item>
             <Button type="primary" htmlType="submit" block>
-              {submitButtonText}
+              {authSubmitButtonText}
             </Button>
           </Form.Item>
 
-          <div style={{ textAlign: 'center' }}>
-            {toggleText}
+          <div className="auth-toggle">
+            {authToggleText}
             <Button type="link" onClick={() => setIsLogin(!isLogin)}>
-              {toggleButtonText}
+              {authToggleButtonText}
             </Button>
           </div>
         </Form>
       </Modal>
 
-      <Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Title level={2} style={{ color: 'white', margin: 0, fontFamily: 'Orbitron' }}>
+      <Header className="app-header">
+        <Title level={2} className="app-title">
           ICEBERG
         </Title>
 
         {currentUser ? (
           <Space>
-            <Text style={{ color: 'white' }}>
-              Welcome, {user}
+            <Text className="welcome-text">
+              Welcome, {userName}
             </Text>
-            <Button type="primary" danger icon={<LogoutOutlined />} onClick={handleLogout}>
+            <Button type="primary" danger icon={<LogoutOutlined />} onClick={logout}>
               Logout
             </Button>
           </Space>
@@ -335,77 +481,145 @@ function App() {
         )}
       </Header>
 
-      <Content style={{ padding: '50px' }}>
-        <Title level={2} style={{ textAlign: 'center', color: 'white' }}>
-          YOUR ICETASKS
-        </Title>
+      <Content className="app-content">
+        <div className="page-header">
+          <Title level={1} className="page-title">
+            YOUR ICETASKS
+          </Title>
+          <Text className="page-subtitle">
+            Organize your tasks with ease.
+          </Text>
+        </div>
 
-        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <Button type="primary" icon={<PlusOutlined />} onClick={addList} size="large">
-            Add List
+        <div className="create-list-container">
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={createNewList}
+            size="large"
+            className="create-list-button"
+          >
+            Create New List
           </Button>
         </div>
 
-        <Space direction="vertical" size="large" style={{ width: '100%' }}>
-          {lists.map((list) => {
-            const listTitleInput = (
-              <Input
-                placeholder="List title"
-                value={list.title}
-                onChange={(e) => updateList(list.id, 'title', e.target.value)}
-                variant="borderless"
-                style={{ fontSize: '16px', fontWeight: 'bold' }}
-              />
-            );
+        {lists.length === 0 ? (
+          <Empty
+            description={
+              <span className="empty-description">
+                No lists yet. Create your first list to get started.
+              </span>
+            }
+            className="empty-state"
+          />
+        ) : (
+          <Row gutter={[24, 24]}>
+            {lists.map((list) => (
+              <Col xs={24} lg={12} xl={8} key={list.id}>
+                <Card
+                  hoverable
+                  className={`list-card ${deletingListIds.includes(list.id) ? 'card-disappear' : 'card-appear'}`}
+                  bodyStyle={{ padding: 0 }}
+                >
+                  <div className="list-header">
+                    <Input
+                      placeholder="Enter list title..."
+                      value={list.title}
+                      onChange={(e) => updateListField(list.id, 'title', e.target.value)}
+                      variant="borderless"
+                      className="list-title-input"
+                    />
+                  </div>
 
-            const listButtons = (
-              <Space>
-                <Button
-                  className="ant-btn-update"
-                  onClick={() => saveListAndTasks(list.id)}>
-                  {saveButtonText(list)}
-                </Button>
-                <Button icon={<PlusOutlined />} onClick={() => addSubtask(list.id)}>
-                  Add Task
-                </Button>
-                <Button danger icon={<DeleteOutlined />} onClick={() => deleteList(list.id)}>
-                  Delete List
-                </Button>
-              </Space>
-            );
+                  <div className="list-body">
+                    <Space direction="vertical" size="middle" className="list-actions">
+                      <Button
+                        type="primary"
+                        icon={list.isSaved ? <CheckCircleOutlined /> : <SaveOutlined />}
+                        onClick={() => saveList(list.id)}
+                        block
+                        size="large"
+                        className="ant-btn-update"
+                      >
+                        {getListButtonText(list)}
+                      </Button>
 
-            return (
-              <Card key={list.id} title={listTitleInput} extra={listButtons}>
-                <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-                  {list.subtasks.map((task) => (
-                    <Card key={task.id} type="inner" size="small">
-                      <Space direction="vertical" style={{ width: '100%' }}>
-                        <Input
-                          placeholder="Task title..."
-                          value={task.title}
-                          onChange={(e) => updateSubtask(list.id, task.id, 'title', e.target.value)}
-                        />
-                        <TextArea
-                          placeholder="Task description..."
-                          value={task.description}
-                          onChange={(e) => updateSubtask(list.id, task.id, 'description', e.target.value)}
-                          rows={3}
-                        />
+                      <div className="list-buttons">
+                        <Button
+                          icon={<PlusOutlined />}
+                          onClick={() => createNewTask(list.id)}
+                        >
+                          Add Task
+                        </Button>
                         <Button
                           danger
                           icon={<DeleteOutlined />}
-                          onClick={() => deleteSubtask(list.id, task.id)}
+                          onClick={() => removeList(list.id)}
                         >
-                          Delete
+                          Delete List
                         </Button>
+                      </div>
+                    </Space>
+
+                    <Divider className="list-divider" />
+
+                    {list.subtasks.length === 0 ? (
+                      <Empty
+                        image={Empty.PRESENTED_IMAGE_SIMPLE}
+                        description={
+                          <Text className="task-empty-text">
+                            No tasks yet
+                          </Text>
+                        }
+                        className="task-empty-state"
+                      />
+                    ) : (
+                      <Space direction="vertical" size="small" className="tasks-container">
+                        {list.subtasks.map((task, index) => (
+                          <Card
+                            key={task.id}
+                            size="small"
+                            className={`task-card ${deletingTaskIds.includes(task.id) ? 'card-disappear' : 'card-appear'}`}
+                          >
+                            <Space direction="vertical" size="small" className="task-content">
+                              <div className="task-header">
+                                <Text strong className="task-number">
+                                  Task #{index + 1}
+                                </Text>
+                                <Button
+                                  danger
+                                  size="small"
+                                  type="text"
+                                  icon={<DeleteOutlined />}
+                                  onClick={() => removeTask(list.id, task.id)}
+                                />
+                              </div>
+
+                              <Input
+                                placeholder="Task title..."
+                                value={task.title}
+                                onChange={(e) => updateTaskField(list.id, task.id, 'title', e.target.value)}
+                                className="task-title-input"
+                              />
+
+                              <TextArea
+                                placeholder="Task description..."
+                                value={task.description}
+                                onChange={(e) => updateTaskField(list.id, task.id, 'description', e.target.value)}
+                                rows={3}
+                                maxLength={300}
+                              />
+                            </Space>
+                          </Card>
+                        ))}
                       </Space>
-                    </Card>
-                  ))}
-                </Space>
-              </Card>
-            );
-          })}
-        </Space>
+                    )}
+                  </div>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        )}
       </Content>
 
       <Footer style={{ textAlign: 'center' }}>
