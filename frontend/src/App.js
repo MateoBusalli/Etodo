@@ -288,7 +288,7 @@ function App() {
 
   const removeList = async (listId) => {
     setDeletingListIds([...deletingListIds, listId]);
-    
+
     setTimeout(async () => {
       if (listId < 0) {
         setLists(lists.filter(l => l.id !== listId));
@@ -328,7 +328,7 @@ function App() {
 
   const removeTask = async (listId, taskId) => {
     setDeletingTaskIds([...deletingTaskIds, taskId]);
-    
+
     setTimeout(async () => {
       const token = localStorage.getItem('token');
 
