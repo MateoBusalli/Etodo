@@ -23,11 +23,17 @@ const errorHandler = (err, req, res, next) => {
     method: req.method
   });
 
-  // Always return 500 Internal Server Error
-  res.status(500).json({
+ // Always return 500 Internal Server Error
+  const statusCode = err.statusCode || 500;
+  const message = err.isOperational ? err.message : 'Internal Server Error';
+
+  res.status(statusCode).json({
     success: false,
-    message: 'Internal Server Error'
+    message: message
   });
 };
 
 module.exports = { errorHandler, asyncHandler, AppError };
+
+//email hugoab@gmail.com
+//mdp Abcdef
