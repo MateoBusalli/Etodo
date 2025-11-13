@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import './App.css';
-import { Button, Input, Card, Space, Modal, Form, Typography, Layout, Alert, Row, Col, Divider, Empty } from 'antd';
+import { Button, Input, Card, Space, Modal, Form, Typography, Layout, Alert, Row, Col, Divider, Empty,DatePicker, Popconfirm} from 'antd';
 import { PlusOutlined, DeleteOutlined, LogoutOutlined, LoginOutlined, SaveOutlined, CheckCircleOutlined } from '@ant-design/icons';
 
-
+const { RangePicker } = DatePicker; 
 const { TextArea } = Input;
 const { Title, Text } = Typography;
 const { Header, Content, Footer } = Layout;
@@ -547,13 +547,21 @@ function App() {
                         >
                           Add Task
                         </Button>
+                        <Space>
+                           <Popconfirm className='Popdelete'
+                           title = 'Are you sure delete this List?' 
+                           okText = 'Yes' 
+                           cancelText = "No"
+                          onConfirm={() => removeList(list.id)}>
                         <Button
                           danger
                           icon={<DeleteOutlined />}
-                          onClick={() => removeList(list.id)}
+                          
                         >
                           Delete List
                         </Button>
+                        </Popconfirm>
+                        </Space>
                       </div>
                     </Space>
 
@@ -582,15 +590,27 @@ function App() {
                                 <Text strong className="task-number">
                                   Task #{index + 1}
                                 </Text>
+                                <Popconfirm 
+                                title = 'Are you sure delete this task?' 
+                                okText = 'Yes' 
+                                cancelText = "No"
+                                onConfirm={ () => removeTask(list.id,task.id)}
+                                >
                                 <Button
                                   danger
                                   size="small"
                                   type="text"
                                   icon={<DeleteOutlined />}
-                                  onClick={() => removeTask(list.id, task.id)}
                                 />
+                                </Popconfirm>
                               </div>
-
+                          
+                              <div className='app-wrapper'>
+                                <Space className = 'app-wrappe'direction='vertical' size={12}>
+                                <RangePicker className='white-picker' showTime/>
+                                </Space>
+                              </div>
+                            
                               <Input
                                 placeholder="Task title..."
                                 value={task.title}
