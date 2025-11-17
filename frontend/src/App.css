@@ -232,7 +232,7 @@ h3 {
 }
 
 .ant-form-item-label>label {
-  color: #35C0EB !important;
+  color: #F1F1EC !important;
   font-weight: 500;
 }
 
@@ -398,12 +398,16 @@ textarea.ant-input:focus,
   font-size: 16px;
   border-radius: 8px;
   min-width: 200px;
+  background-color: #1E212C;
+  color:#F1F1EC;
 }
 
 .create-list-button:hover {
   background-color: #F1F1EC !important;
   border-color: #F1F1EC !important;
-  box-shadow: 0 4px 12px #F1F1EC88 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px #F1F1EC88 !important;
+  color: #181B28 !important;
 }
 
 .empty-state {
@@ -542,7 +546,7 @@ color: #FAFAEC;
 
 
 .Popdelete .ant-popover-buttons .ant-btn-primary {
-  background-color: #333; /* noir/gris foncé */
+  background-color: #333;
   border-color: #333;
   color: white;
 }
@@ -773,4 +777,75 @@ color: #FAFAEC;
 
 .ant-dropdown-menu-item-icon {
   color: #F1F1EC !important;
+}
+
+.dropdown-status-button.ant-btn {
+  background-color: #1E212C !important;
+  border: 1px solid #F1F1EC !important;
+  color: #F1F1EC !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+  margin-left: 10px !important;
+}
+
+.dropdown-status-button.ant-btn:hover,
+.dropdown-status-button.ant-btn:focus {
+  background-color: #F1F1EC !important;
+  border-color: #F1F1EC !important;
+  color: #181B28 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 8px #F1F1EC88 !important;
+}
+
+.dropdown-status-button.ant-btn .anticon {
+  color: inherit !important;
+}
+
+.ant-dropdown .ant-btn,
+.ant-dropdown-trigger {
+  background-color: #1a1d2e !important;
+  border: 2px solid #F1F1EC !important;
+  color: #F1F1EC !important;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.ant-dropdown .ant-btn:hover,
+.ant-dropdown-trigger:hover {
+  background-color: #2e344a !important;
+  border-color: #F1F1EC !important;
+  color: #F1F1EC !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(241, 241, 236, 0.3) !important;
+}
+
+.ant-dropdown .ant-btn .anticon {
+  color: #F1F1EC !important;
+}
+
+.ant-form-item-label>label {
+  color: #F1F1EC !important;
+}
+
+.switch-button {
+  background-color: #181B28;
+  border-color: #F1F1EC;
+  transition: all 0.3s ease;
+  color: #F1F1EC;
+}
+
+.switch-button:hover {
+  background-color: #F1F1EC !important;
+  border-color: #F1F1EC !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px #F1F1EC88 !important;
+  color: #181B28 !important;
+}
+
+.login-button:hover {
+  background-color: #F1F1EC !important;
+  border-color: #F1F1EC !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px #F1F1EC88 !important;
+  color: #181B28 !important;
 }

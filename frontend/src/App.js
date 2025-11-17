@@ -3,7 +3,7 @@ import './App.css';
 import { Button, Input, Card, Space, Modal, Form, Typography, Layout, Alert, Row, Col, Divider, Empty, DatePicker, Popconfirm, Dropdown } from 'antd';
 import { PlusOutlined, DeleteOutlined, LogoutOutlined, LoginOutlined, SaveOutlined, CheckCircleOutlined, CheckOutlined, LoadingOutlined, ExceptionOutlined, DownOutlined } from '@ant-design/icons';
 
-const { RangePicker } = DatePicker; 
+const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 const { Title, Text } = Typography;
 const { Header, Content, Footer } = Layout;
@@ -103,7 +103,7 @@ function App() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || `${endpoint} failed`);
+        throw new Error(error.message || `${endpoint} successfuly failed`);
       }
 
       const data = await response.json();
@@ -425,7 +425,7 @@ function App() {
             </>
           )}
 
-          <Form.Item label="Email" required>
+          <Form.Item label="Email" style={{ color: '#ffffff' }} required>
             <Input
               type="email"
               placeholder="Email"
@@ -434,7 +434,7 @@ function App() {
             />
           </Form.Item>
 
-          <Form.Item label="Password" required>
+          <Form.Item label="Password" style={{ color: '#ffffff' }} required>
             <Input.Password
               placeholder="Password"
               value={authForm.password}
@@ -443,14 +443,14 @@ function App() {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" block>
+            <Button className="login-button" type="primary" htmlType="submit" block>
               {authSubmitButtonText}
             </Button>
           </Form.Item>
 
           <div className="auth-toggle">
             {authToggleText}
-            <Button type="link" onClick={() => setIsLogin(!isLogin)}>
+            <Button className='switch-button' type="link" onClick={() => setIsLogin(!isLogin)}>
               {authToggleButtonText}
             </Button>
           </div>
@@ -472,7 +472,7 @@ function App() {
             </Button>
           </Space>
         ) : (
-          <Button type="primary" icon={<LoginOutlined />} onClick={() => setShowAuthPopup(true)}>
+          <Button className='login-button' type="primary" icon={<LoginOutlined />} onClick={() => setShowAuthPopup(true)}>
             Login
           </Button>
         )}
@@ -549,19 +549,19 @@ function App() {
                           Add Task
                         </Button>
                         <Space>
-                           <Popconfirm className='Popdelete'
-                           title = 'Are you sure delete this List?' 
-                           okText = 'Yes' 
-                           cancelText = "No"
-                          onConfirm={() => removeList(list.id)}>
-                        <Button
-                          danger
-                          icon={<DeleteOutlined />}
-                          
-                        >
-                          Delete List
-                        </Button>
-                        </Popconfirm>
+                          <Popconfirm className='Popdelete'
+                            title='Are you sure delete this List?'
+                            okText='Yes'
+                            cancelText="No"
+                            onConfirm={() => removeList(list.id)}>
+                            <Button
+                              danger
+                              icon={<DeleteOutlined />}
+
+                            >
+                              Delete List
+                            </Button>
+                          </Popconfirm>
                         </Space>
                       </div>
                     </Space>
@@ -591,27 +591,27 @@ function App() {
                                 <Text strong className="task-number">
                                   Task #{index + 1}
                                 </Text>
-                                <Popconfirm 
-                                title = 'Are you sure delete this task?' 
-                                okText = 'Yes' 
-                                cancelText = "No"
-                                onConfirm={ () => removeTask(list.id,task.id)}
+                                <Popconfirm
+                                  title='Are you sure delete this task?'
+                                  okText='Yes'
+                                  cancelText="No"
+                                  onConfirm={() => removeTask(list.id, task.id)}
                                 >
-                                <Button
-                                  danger
-                                  size="small"
-                                  type="text"
-                                  icon={<DeleteOutlined />}
-                                />
+                                  <Button
+                                    danger
+                                    size="small"
+                                    type="text"
+                                    icon={<DeleteOutlined />}
+                                  />
                                 </Popconfirm>
                               </div>
-                          
+
                               <div className='app-wrapper'>
-                                <Space className = 'app-wrappe'direction='vertical' size={12}>
-                                <RangePicker className='white-picker' showTime/>
+                                <Space className='app-wrappe' direction='vertical' size={12}>
+                                  <RangePicker className='white-picker' showTime />
                                 </Space>
                               </div>
-                            
+
                               <Input
                                 placeholder="Task title..."
                                 value={task.title}
@@ -631,30 +631,33 @@ function App() {
                                 <div className="progress-header">
                                   <Text strong style={{ color: '#F1F1EC' }}>Task Status:</Text>
                                   <Dropdown
+                                    style={{ color: '#F1F1EC' }}
+                                    trigger={['click']}
                                     menu={{
                                       items: [
                                         {
                                           key: '0',
                                           label: 'To do',
                                           icon: <ExceptionOutlined />,
-                                          onClick: () => updateTaskField(list.id, task.id, 'status', 0)
+                                          onClick: () => { updateTaskField(list.id, task.id, 'status', 0); showAlert('Task status updated to "To do"', 'success'); }
                                         },
                                         {
                                           key: '1',
                                           label: 'In Progress',
                                           icon: <LoadingOutlined />,
-                                          onClick: () => updateTaskField(list.id, task.id, 'status', 1)
+
+                                          onClick: () => { updateTaskField(list.id, task.id, 'status', 1); showAlert('Task status updated to "In Progress"', 'success'); }
                                         },
                                         {
                                           key: '2',
                                           label: 'Finished',
                                           icon: <CheckOutlined />,
-                                          onClick: () => updateTaskField(list.id, task.id, 'status', 2)
+                                          onClick: () => { updateTaskField(list.id, task.id, 'status', 2); showAlert('Task status updated to "Finished"', 'success'); }
                                         },
                                       ],
                                     }}
                                   >
-                                    <Button size="small" style={{ marginLeft: '10px' }}>
+                                    <Button size="small" className="dropdown-status-button">
                                       {task.status === 0 ? <><ExceptionOutlined /> To do</> : task.status === 1 ? <><LoadingOutlined /> In Progress</> : <><CheckOutlined /> Finished</>}
                                       {' '}<DownOutlined />
                                     </Button>
