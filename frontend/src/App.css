@@ -71,7 +71,7 @@ h3 {
 
 .ant-alert {
   background-color: #1a1d2e !important;
-  border: 2px solid #A38C2D !important;
+  border: 2px solid #ffffff !important;
   border-radius: 10px !important;
   color: #ffffff !important;
 }
@@ -93,7 +93,7 @@ h3 {
 }
 
 .ant-alert-info {
-  border-color: #A38C2D !important;
+  border-color: #ffffff !important;
 }
 
 .ant-alert-close-icon {
@@ -101,7 +101,7 @@ h3 {
 }
 
 .ant-alert-close-icon:hover {
-  color: #A38C2D !important;
+  color: #cccccc !important;
 }
 
 .custom-alert-container {
@@ -122,7 +122,7 @@ h3 {
 .ant-message-notice-content {
   background-color: #1a1d2e !important;
   color: #ffffff !important;
-  border: 1px solid #A38C2D !important;
+  border: 1px solid #F1F1EC !important;
   border-radius: 8px !important;
   padding: 12px 16px !important;
 }
@@ -150,13 +150,13 @@ h3 {
 
 .ant-card {
   background-color: #181B28;
-  border: 2px solid #A38C2D;
+  border: 2px solid #F1F1EC;
   border-radius: 10px;
   transition: all 0.3s ease;
 }
 
 .ant-card:hover {
-  box-shadow: 0 8px 24px #e2bc2366;
+  box-shadow: 0 8px 24px #F1F1EC88;
 }
 
 .ant-card-head {
@@ -177,15 +177,17 @@ h3 {
 }
 
 .ant-btn-primary {
-  background-color: #A38C2D;
-  border-color: #A38C2D;
+  background-color: #F1F1EC;
+  border-color: #F1F1EC;
   transition: all 0.3s ease;
+  color: #181B28;
 }
 
 .ant-btn-primary:hover {
-  background-color: #e2bc23;
-  border-color: #e2bc23;
-  box-shadow: 0 4px 12px #e2bc2366;
+  background-color: #F1F1EC;
+  border-color: #F1F1EC;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px #F1F1EC88;
 }
 
 .ant-btn-primary.ant-btn-dangerous:hover {
@@ -200,7 +202,7 @@ h3 {
 
 .ant-modal-header {
   background-color: #1a1d2e !important;
-  border-bottom: 1px solid #A38C2D;
+  border-bottom: 1px solid #F1F1EC;
   border-radius: 15px 15px 0 0;
   padding: 20px 24px;
 }
@@ -216,7 +218,7 @@ h3 {
 }
 
 .ant-modal-close:hover {
-  color: #e2bc23 !important;
+  color: #F1F1EC !important;
 }
 
 .ant-modal-body {
@@ -230,7 +232,7 @@ h3 {
 }
 
 .ant-form-item-label>label {
-  color: #A38C2D !important;
+  color: #35C0EB !important;
   font-weight: 500;
 }
 
@@ -244,7 +246,7 @@ textarea.ant-input,
 .ant-input-password input {
   background-color: #0f1117 !important;
   color: #ffffff !important;
-  border: 2px solid #A38C2D !important;
+  border: 2px solid #F1F1EC !important;
   border-radius: 6px;
   transition: all 0.3s ease;
 }
@@ -260,7 +262,7 @@ textarea.ant-input,
 .ant-input-affix-wrapper.ant-input-password input.ant-input {
   background-color: #0f1117 !important;
   color: #ffffff !important;
-  border: 2px solid #A38C2D !important;
+  border: 2px solid #F1F1EC !important;
   border-radius: 6px !important;
   padding: 4px 40px 4px 11px !important;
   flex: 1 !important;
@@ -281,18 +283,18 @@ textarea.ant-input::placeholder,
 .ant-input:hover,
 textarea.ant-input:hover,
 .ant-input-password input:hover {
-  box-shadow: 0 0 8px #e2bc2366;
+  box-shadow: 0 0 8px #F1F1EC88;
 }
 
 .ant-input:focus,
 textarea.ant-input:focus,
 .ant-input-password input:focus {
-  border-color: #A38C2D !important;
-  box-shadow: 0 0 0 3px #e2bc2366 !important;
+  border-color: #F1F1EC !important;
+  box-shadow: 0 0 0 3px #F1F1EC88 !important;
 }
 
 .ant-input-password .anticon {
-  color: #A38C2D !important;
+  color: #F1F1EC !important;
 }
 
 .ant-modal-body div[style*="textAlign"],
@@ -301,22 +303,22 @@ textarea.ant-input:focus,
 }
 
 .ant-btn-link {
-  color: #A38C2D !important;
+  color: #F1F1EC !important;
 }
 
 .ant-btn-link:hover {
-  color: #e2bc23 !important;
+  color: #F1F1EC !important;
 }
 
 .ant-btn-update {
-  background-color: #A38C2D !important;
-  border-color: #A38C2D !important;
-  color: #ffffff !important;
+  background-color: #F1F1EC !important;
+  border-color: #F1F1EC !important;
+  color: #181B28 !important;
 }
 
 .ant-btn-update:hover {
-  background-color: #e2bc23 !important;
-  border-color: #e2bc23 !important;
+  background-color: #F1F1EC !important;
+  border-color: #F1F1EC !important;
 }
 
 .ant-btn-default {
@@ -359,7 +361,7 @@ textarea.ant-input:focus,
   font-family: 'Orbitron' !important;
 }
 
-.welcome-text {
+.white-font {
   color: #ffffff !important;
 }
 
@@ -399,10 +401,9 @@ textarea.ant-input:focus,
 }
 
 .create-list-button:hover {
-  background-color: #e2bc23 !important;
-  border-color: #e2bc23 !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px #e2bc2366 !important;
+  background-color: #F1F1EC !important;
+  border-color: #F1F1EC !important;
+  box-shadow: 0 4px 12px #F1F1EC88 !important;
 }
 
 .empty-state {
@@ -423,13 +424,13 @@ textarea.ant-input:focus,
 .list-header {
   padding: 20px 24px;
   background: linear-gradient(135deg, #2e344a 0%, #1a1d2e 100%);
-  border-bottom: 2px solid #A38C2D;
+  border-bottom: 2px solid #F1F1EC;
 }
 
 .list-title-input {
   font-size: 20px;
   font-weight: bold;
-  color: white;
+  color: #ffffff;
   padding: 0 0 8px 8px;
 }
 
@@ -450,7 +451,7 @@ textarea.ant-input:focus,
 
 .list-divider {
   margin: 16px 0;
-  border-color: #A38C2D;
+  border-color: #F1F1EC;
 }
 
 .tasks-container {
@@ -459,8 +460,13 @@ textarea.ant-input:focus,
 
 .task-card {
   border-radius: 8px;
-  border: 1px solid #A38C2D80;
+  border: 1px solid #F1F1EC50;
   background: #1a1d2e;
+  box-shadow: none !important;
+}
+
+.task-card:hover {
+  box-shadow: none !important;
 }
 
 .task-header {
@@ -470,7 +476,7 @@ textarea.ant-input:focus,
 }
 
 .task-number {
-  color: #A38C2D;
+  color: #F1F1EC;
 }
 
 .task-content {
@@ -539,4 +545,230 @@ color: #FAFAEC;
   background-color: #333; /* noir/gris foncé */
   border-color: #333;
   color: white;
+.ant-steps-item-finish .ant-steps-item-icon {
+  background-color: transparent !important;
+  border-color: #F1F1EC !important;
+}
+
+.ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon {
+  color: #F1F1EC !important;
+}
+
+.ant-steps-item-process .ant-steps-item-icon {
+  background-color: transparent !important;
+  border-color: #F1F1EC !important;
+}
+
+.ant-steps-item-process .ant-steps-item-icon > .ant-steps-icon {
+  color: #F1F1EC !important;
+}
+
+.ant-steps-item-wait .ant-steps-item-icon {
+  background-color: transparent !important;
+  border-color: #888 !important;
+}
+
+.ant-steps-item-wait .ant-steps-item-icon > .ant-steps-icon {
+  color: #888 !important;
+}
+
+.ant-steps-item-title {
+  color: #F1F1EC !important;
+}
+
+.ant-steps-item-wait .ant-steps-item-title {
+  color: #888 !important;
+}
+
+.ant-steps-item-finish .ant-steps-item-title::after {
+  background-color: #F1F1EC !important;
+}
+
+.ant-steps-item-process .ant-steps-item-title::after {
+  background-color: #888 !important;
+}
+
+.ant-steps-item-wait .ant-steps-item-title::after {
+  background-color: #888 !important;
+}
+
+.titanic-progress {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.progress-track {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  background-color: #888;
+  border-radius: 2px;
+  margin-bottom: 30px;
+  overflow: visible;
+}
+
+.progress-fill {
+  position: absolute;
+  height: 100%;
+  background-color: #F1F1EC;
+  border-radius: 2px;
+  transition: width 0.8s ease;
+}
+
+@keyframes sail {
+  0%, 100% {
+    transform: translate(-50%, -50%) translateY(0px);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-3px);
+  }
+}
+
+@keyframes wave {
+  0%, 100% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  25% {
+    transform: translate(-50%, -50%) rotate(-2deg);
+  }
+  75% {
+    transform: translate(-50%, -50%) rotate(2deg);
+  }
+}
+
+.titanic-ship {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(-50%, -50%);
+  transition: left 0.8s ease;
+  animation: sail 2s ease-in-out infinite, wave 3s ease-in-out infinite;
+  line-height: 1;
+  z-index: 2;
+}
+
+.titanic-ship img {
+  width: 70px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(1px 0 0 black) 
+          drop-shadow(-1px 0 0 black) 
+          drop-shadow(0 1px 0 black) 
+          drop-shadow(0 -1px 0 black);
+}
+  
+.iceberg-end {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(50%, -50%);
+  line-height: 1;
+  z-index: 1;
+}
+
+.iceberg-end img {
+  width: 45px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(1px 0 0 black) 
+          drop-shadow(-1px 0 0 black) 
+          drop-shadow(0 1px 0 black) 
+          drop-shadow(0 -1px 0 black);
+}
+
+.iceberg-end.hidden {
+  opacity: 1;
+  animation: fadeOutDelayed 0.5s ease 0.8s forwards;
+}
+
+@keyframes fadeOutDelayed {
+  to {
+    opacity: 0;
+  }
+}
+
+.titanic-ship img.will-sink {
+  opacity: 1;
+  animation: fadeOutCollision 0.3s ease 0.8s forwards;
+}
+
+@keyframes fadeOutCollision {
+  to {
+    opacity: 0;
+  }
+}
+
+.titanic-ship .sunk-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(1px 0 0 black) 
+          drop-shadow(-1px 0 0 black) 
+          drop-shadow(0 1px 0 black) 
+          drop-shadow(0 -1px 0 black);
+  opacity: 0;
+  animation: fadeInCollision 0.3s ease 0.8s forwards;
+}
+
+@keyframes fadeInCollision {
+  to {
+    opacity: 1;
+  }
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.progress-labels span {
+  font-size: 12px;
+  color: #F1F1EC;
+  font-weight: 500;
+}
+
+.progress-header .ant-btn {
+  background-color: #F1F1EC !important;
+  border-color: #F1F1EC !important;
+  color: #181B28 !important;
+  font-weight: 500;
+}
+
+.progress-header .ant-btn:hover {
+  background-color: #F1F1EC !important;
+  border-color: #F1F1EC !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px #F1F1EC88 !important;
+}
+
+.ant-dropdown-menu {
+  background-color: #1a1d2e !important;
+  border: 2px solid #F1F1EC !important;
+  border-radius: 8px !important;
+  padding: 8px 0 !important;
+}
+
+.ant-dropdown-menu-item {
+  color: #F1F1EC !important;
+  padding: 8px 16px !important;
+}
+
+.ant-dropdown-menu-item:hover {
+  background-color: #2e344a !important;
+}
+
+.ant-dropdown-menu-item-icon {
+  color: #F1F1EC !important;
 }

@@ -2,11 +2,14 @@ import { useState, useEffect, useCallback } from 'react';
 import './App.css';
 import { Button, Input, Card, Space, Modal, Form, Typography, Layout, Alert, Row, Col, Divider, Empty,DatePicker, Popconfirm} from 'antd';
 import { PlusOutlined, DeleteOutlined, LogoutOutlined, LoginOutlined, SaveOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import { Button, Input, Card, Space, Modal, Form, Typography, Layout, Alert, Row, Col, Divider, Empty, Steps, Dropdown } from 'antd';
+import { PlusOutlined, DeleteOutlined, LogoutOutlined, LoginOutlined, SaveOutlined, CheckCircleOutlined,  CheckOutlined, LoadingOutlined, ExceptionOutlined, DownOutlined} from '@ant-design/icons';
 
 const { RangePicker } = DatePicker; 
 const { TextArea } = Input;
 const { Title, Text } = Typography;
 const { Header, Content, Footer } = Layout;
+const { Step } = Steps;
 
 
 function App() {
@@ -151,6 +154,7 @@ function App() {
       id: -nextId,
       title: '',
       description: '',
+      status: 0,
       isSaved: false
     };
 
@@ -463,7 +467,7 @@ function App() {
 
         {currentUser ? (
           <Space>
-            <Text className="welcome-text">
+            <Text className="white-font">
               Welcome, {userName}
             </Text>
             <Button type="primary" danger icon={<LogoutOutlined />} onClick={logout}>
@@ -625,6 +629,56 @@ function App() {
                                 rows={3}
                                 maxLength={300}
                               />
+                              <br />
+                              <div className="titanic-progress">
+                                <div className="progress-header">
+                                  <Text strong style={{ color: '#F1F1EC' }}>Task Status:</Text>
+                                  <Dropdown
+                                    menu={{
+                                      items: [
+                                        {
+                                          key: '0',
+                                          label: 'To do',
+                                          icon: <ExceptionOutlined />,
+                                          onClick: () => updateTaskField(list.id, task.id, 'status', 0)
+                                        },
+                                        {
+                                          key: '1',
+                                          label: 'In Progress',
+                                          icon: <LoadingOutlined />,
+                                          onClick: () => updateTaskField(list.id, task.id, 'status', 1)
+                                        },
+                                        {
+                                          key: '2',
+                                          label: 'Finished',
+                                          icon: <CheckOutlined />,
+                                          onClick: () => updateTaskField(list.id, task.id, 'status', 2)
+                                        },
+                                      ],
+                                    }}
+                                  >
+                                    <Button size="small" style={{ marginLeft: '10px' }}>
+                                      {task.status === 0 ? <><ExceptionOutlined /> To do</> : task.status === 1 ? <><LoadingOutlined /> In Progress</> : <><CheckOutlined /> Finished</>}
+                                      {' '}<DownOutlined />
+                                    </Button>
+                                  </Dropdown>
+                                </div>
+                                <div className={`progress-track ${task.status === 2 ? 'finished' : ''}`}>
+                                  <div className="progress-fill" style={{ width: `${(task.status || 0) * 50}%` }}></div>
+                                  <div className={`titanic-ship ${task.status === 2 ? 'sinking' : ''}`} style={{ left: `${(task.status || 0) * 50}%` }}>
+                                    <img src="/titanic.png" alt="Titanic" className={task.status === 2 ? 'will-sink' : ''} />
+                                    {task.status === 2 && <img src="/titanicsink.png" alt="Titanic Sinking" className="sunk-image" />}
+                                  </div>
+                                  <div className={`iceberg-end ${task.status === 2 ? 'hidden' : ''}`}>
+                                    <img src="/iceberg.png" alt="Iceberg" />
+                                  </div>
+                                </div>
+                                <div className="progress-labels">
+                                  <span>To do</span>
+                                  <span>In Progress</span>
+                                  <span>Finished</span>
+                                </div>
+                              </div>
                             </Space>
                           </Card>
                         ))}

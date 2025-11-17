@@ -23,7 +23,7 @@ const errorHandler = (err, req, res, next) => {
     method: req.method
   });
 
- // Always return 500 Internal Server Error
+  // Always return 500 Internal Server Error
   const statusCode = err.statusCode || 500;
   const message = err.isOperational ? err.message : 'Internal Server Error';
 
