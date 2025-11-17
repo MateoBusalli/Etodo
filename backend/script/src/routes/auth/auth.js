@@ -66,7 +66,6 @@ router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Vérification 1 : Champs vides
         if (!email || !password) {
             return res.status(400).json({
                 success: false,
@@ -74,7 +73,6 @@ router.post('/login', async (req, res) => {
             });
         }
 
-        // Vérification 2 : Email existe
         const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
 
         if (rows.length === 0) {
@@ -86,7 +84,6 @@ router.post('/login', async (req, res) => {
 
         const user = rows[0];
 
-        // Vérification 3 : Mot de passe correct
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
@@ -96,7 +93,6 @@ router.post('/login', async (req, res) => {
             });
         }
 
-        // Tout est bon, créer le token
         const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
 
         return res.json({

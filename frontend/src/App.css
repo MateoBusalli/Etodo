@@ -499,6 +499,52 @@ textarea.ant-input:focus,
   text-align: center;
 }
 
+.ant-picker-range{
+background-color: #0f1117;
+color: white;
+border: 2px solid #FAFAEC;
+}
+
+.ant-picker-input input{
+
+  background-color: black;
+  color: white
+}
+
+.ant-picker-suffix{
+color: white;
+}
+.white-picker .ant-picker-input{
+color: #FAFAEC;
+}
+.white-picker .ant-picker-suffix{
+color: #FAFAEC;
+}
+.white-picker .ant-picker-clear{
+color: #FAFAEC;
+}
+
+.Popdelete .ant-popover-inner{
+  background-color: #1a1d2e;
+  color: white;
+}
+
+.Popdelete .ant-popover-title{
+  color: white;
+}
+
+
+.Popdelete .ant-popover-buttons .ant-btn {
+  background-color: black;
+  color: white;
+  border: 1px solid white;
+}
+
+
+.Popdelete .ant-popover-buttons .ant-btn-primary {
+  background-color: #333; /* noir/gris foncé */
+  border-color: #333;
+  color: white;
 .ant-steps-item-finish .ant-steps-item-icon {
   background-color: transparent !important;
   border-color: #F1F1EC !important;
