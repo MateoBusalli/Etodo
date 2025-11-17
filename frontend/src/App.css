@@ -545,6 +545,8 @@ color: #FAFAEC;
   background-color: #333; /* noir/gris foncé */
   border-color: #333;
   color: white;
+}
+
 .ant-steps-item-finish .ant-steps-item-icon {
   background-color: transparent !important;
   border-color: #F1F1EC !important;
