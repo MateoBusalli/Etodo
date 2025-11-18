@@ -257,7 +257,7 @@ function App() {
             title: task.title,
             description: task.description,
             list_id: savedListId,
-            status: false
+            status: task.status !== undefined ? task.status : 0
           })
         });
 
@@ -639,20 +639,23 @@ function App() {
                                           key: '0',
                                           label: 'To do',
                                           icon: <ExceptionOutlined />,
-                                          onClick: () => { updateTaskField(list.id, task.id, 'status', 0); showAlert('Task status updated to "To do"', 'success'); }
+                                          onClick: () => { updateTaskField(list.id, task.id, 'status', 0); //showAlert('Task status updated to "To do"', 'success'); 
+                                            }
                                         },
                                         {
                                           key: '1',
                                           label: 'In Progress',
                                           icon: <LoadingOutlined />,
 
-                                          onClick: () => { updateTaskField(list.id, task.id, 'status', 1); showAlert('Task status updated to "In Progress"', 'success'); }
+                                          onClick: () => { updateTaskField(list.id, task.id, 'status', 1); //showAlert('Task status updated to "In Progress"', 'success'); 
+                                            }
                                         },
                                         {
                                           key: '2',
                                           label: 'Finished',
                                           icon: <CheckOutlined />,
-                                          onClick: () => { updateTaskField(list.id, task.id, 'status', 2); showAlert('Task status updated to "Finished"', 'success'); }
+                                          onClick: () => { updateTaskField(list.id, task.id, 'status', 2); //showAlert('Task status updated to "Finished"', 'success'); 
+                                            }
                                         },
                                       ],
                                     }}
