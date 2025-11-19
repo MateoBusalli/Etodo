@@ -15,7 +15,7 @@ router.get("/lists", auth_middleware, async (req, res) => {
     
     // Retrieve only the lists of the connected user
     const [lists] = await conn.query(
-      `SELECT * FROM lists WHERE user_id = ? ORDER BY created_at DESC`,
+      `SELECT * FROM lists WHERE user_id = ? ORDER BY created_at ASC`,
       [req.user.id]
     );
     

@@ -326,7 +326,7 @@ function App() {
       }
     }, 500);
   };
-
+  
   const removeTask = async (listId, taskId) => {
     setDeletingTaskIds([...deletingTaskIds, taskId]);
 
@@ -384,6 +384,31 @@ function App() {
   const userName = currentUser?.firstname || currentUser?.name;
   const getListButtonText = (list) => list.isSaved ? 'List & Tasks Saved' : 'Update List';
 
+  const formatDateShort = (value) => {
+    if (!value) return '';
+    const d = new Date(value);
+    if (isNaN(d)) return value;
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yy = String(d.getFullYear()).slice(-2);
+    const hh = String(d.getHours()).slice(-2);
+    const mn = String(d.getMinutes()).padStart(2, '0');
+    const ss = String(d.getSeconds()).slice(-2)
+    return `${dd}-${mm}-${yy} ${hh}:${mn}:${ss}`;
+  };
+
+    const formatDatelists = (value) => {
+    if (!value) return '';
+    const d = new Date(value);
+    if (isNaN(d)) return value;
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yy = String(d.getFullYear()).slice(-2);
+    const hh = String(d.getHours()).slice(-2);
+    const mn = String(d.getMinutes()).padStart(2, '0');
+    const ss = String(d.getSeconds()).slice(-2)
+    return `${dd}-${mm}-${yy} ${hh}:${mn}:${ss}`;
+  };
 
   return (
     <Layout className="app-layout">
@@ -511,7 +536,7 @@ function App() {
           />
         ) : (
           <Row gutter={[24, 24]}>
-            {lists.map((list) => (
+            {lists.map((list,index) => (
               <Col xs={24} lg={12} xl={8} key={list.id}>
                 <Card
                   hoverable
@@ -519,6 +544,11 @@ function App() {
                   bodyStyle={{ padding: 0 }}
                 >
                   <div className="list-header">
+                    <Space>
+                     <Text strong className="task-number">
+                        List #{index + 1} created at: {list.created_at ? formatDatelists(list.created_at) : '—'}
+                      </Text>
+                      </Space>
                     <Input
                       placeholder="Enter list title..."
                       value={list.title}
@@ -589,7 +619,7 @@ function App() {
                             <Space direction="vertical" size="small" className="task-content">
                               <div className="task-header">
                                 <Text strong className="task-number">
-                                  Task #{index + 1}
+                                  Task #{index + 1} created at: {task.created_at ? formatDateShort(task.created_at) : '—'}
                                 </Text>
                                 <Popconfirm
                                   title='Are you sure delete this task?'
