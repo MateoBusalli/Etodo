@@ -3,7 +3,6 @@ import './App.css';
 import { Button, Input, Card, Space, Modal, Form, Typography, Layout, Alert, Row, Col, Divider, Empty, DatePicker, Popconfirm, Dropdown } from 'antd';
 import { PlusOutlined, DeleteOutlined, LogoutOutlined, LoginOutlined, SaveOutlined, CheckCircleOutlined, CheckOutlined, LoadingOutlined, ExceptionOutlined, DownOutlined } from '@ant-design/icons';
 
-const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 const { Title, Text } = Typography;
 const { Header, Content, Footer } = Layout;
@@ -637,10 +636,15 @@ function App() {
                                 </Popconfirm>
                               </div>
 
-                              <div className='app-wrapper'>
-                                <Space className='app-wrappe' direction='vertical' size={12}>
-                                  <DatePicker className='white-picker' placeholder = 'Select end date' showTime />
-                                </Space>
+                              <div className='deadline-wrapper'>
+                                <DatePicker 
+                                  className='deadline-picker' 
+                                  showTime 
+                                  placeholder="Select deadline"
+                                  format="YYYY-MM-DD HH:mm"
+                                  value={task.deadline}
+                                  onChange={(date) => updateTaskField(list.id, task.id, 'deadline', date)}
+                                />
                               </div>
 
                               <Input
