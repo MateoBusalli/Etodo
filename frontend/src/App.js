@@ -327,7 +327,7 @@ function App() {
       }
     }, 500);
   };
-
+  
   const removeTask = async (listId, taskId) => {
     setDeletingTaskIds([...deletingTaskIds, taskId]);
 
