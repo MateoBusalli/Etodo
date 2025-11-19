@@ -241,12 +241,13 @@ function App() {
 
       const savedTasks = [];
 
-      for (const task of list.subtasks) {
+        for (const task of list.subtasks) {
         const isNewTask = task.id < 0;
         const taskEndpoint = isNewTask
           ? 'http://127.0.0.1:3001/api/todos'
           : `http://127.0.0.1:3001/api/todos/${task.id}`;
 
+        
         const taskResponse = await fetch(taskEndpoint, {
           method: isNewTask ? 'POST' : 'PUT',
           headers: {
