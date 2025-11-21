@@ -1,7 +1,27 @@
 body {
-  background-color: #181B28;
+  background: #181B28;
   margin: 0;
   padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.animated-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  background: linear-gradient(270deg, #232531, #2e344a, #181B28, #232531, #2e344a);
+  background-size: 400% 400%;
+  animation: gradientMove 18s ease-in-out infinite;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 *, *::before, *::after {
@@ -134,7 +154,7 @@ body {
 }
 
 .ant-layout-content {
-  background-color: #181B28;
+  background: transparent;
 }
 
 .ant-layout-footer {
@@ -170,7 +190,8 @@ body {
 }
 
 .ant-empty-description {
-  color: #888 !important;
+  color: #f1f1ec !important;
+  text-shadow: 0 2px 8px #23253199;
 }
 
 .ant-btn-primary {
@@ -350,6 +371,10 @@ textarea.ant-input:focus,
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: linear-gradient(90deg, #232531 0%, #2e344a 50%, #181B28 100%);
+  box-shadow: 0 4px 24px 0 rgba(30,33,44,0.15);
+  border-bottom: 2px solid #232531;
+  z-index: 2;
 }
 
 .app-title {
@@ -366,22 +391,36 @@ textarea.ant-input:focus,
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
+  position: relative;
+  z-index: 1;
+  background: transparent;
 }
 
 .page-header {
   text-align: center;
   margin-bottom: 40px;
+  margin-top: 32px;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .page-title {
   color: #ffffff !important;
   margin-bottom: 10px !important;
   font-size: 48px !important;
+  text-shadow: 0 2px 8px #23253199;
+  font-weight: 700;
 }
 
 .page-subtitle {
   color: #888 !important;
-  font-size: 16px !important;
+  font-size: 18px !important;
+  font-weight: 400;
+  margin-bottom: 0;
+  text-shadow: none;
 }
 
 .create-list-container {
@@ -411,8 +450,9 @@ textarea.ant-input:focus,
 }
 
 .empty-description {
-  color: #888;
+  color: #f1f1ec;
   font-size: 16px;
+  text-shadow: 0 2px 8px #23253199;
 }
 
 .list-card {

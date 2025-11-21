@@ -138,45 +138,39 @@ router.delete("/lists/:id", auth_middleware, async (req, res) => {
 // POST create a new todo
 router.post("/todos", auth_middleware, async (req, res) => {
   try {
-    const { list_id, title, description, status } = req.body;
-    
+    const { list_id, title, description, status, deadline } = req.body;
     if (!list_id || !title) {
       return res.status(400).json({ message: "list_id and title are required" });
     }
-    
     const conn = await pool.getConnection();
-    
     // Check that the list belongs to the user
     const [lists] = await conn.query(
       "SELECT * FROM lists WHERE id = ? AND user_id = ?",
       [list_id, req.user.id]
     );
-    
     if (lists.length === 0) {
       conn.release();
       return res.status(404).json({ message: "List not found" });
     }
-    
     // Get the next position
     const [positions] = await conn.query(
       "SELECT MAX(position) as maxPos FROM todo WHERE list_id = ?",
       [list_id]
     );
     const nextPosition = (positions[0].maxPos || 0) + 1;
-    
     const [result] = await conn.query(
-      "INSERT INTO todo (user_id, list_id, title, description, status, position, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())",
-      [req.user.id, list_id, title, description || '', status || false, nextPosition]
+      "INSERT INTO todo (user_id, list_id, title, description, status, position, created_at, updated_at, due_time) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW(), ?)",
+      [req.user.id, list_id, title, description || '', status || false, nextPosition, deadline || null]
     );
     conn.release();
-    
     res.status(201).json({ 
       id: result.insertId, 
       list_id,
       title, 
       description,
       status: status || false,
-      position: nextPosition
+      position: nextPosition,
+      deadline: deadline || null
     });
   } catch (err) {
     console.error(err);
@@ -188,32 +182,26 @@ router.post("/todos", auth_middleware, async (req, res) => {
 router.put("/todos/:id", auth_middleware, async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, status } = req.body;
-    
+    const { title, description, status, deadline } = req.body;
     if (!title) {
       return res.status(400).json({ message: "Title is required" });
     }
-    
     const conn = await pool.getConnection();
-    
     // Check that the todo belongs to the user
     const [todos] = await conn.query(
       "SELECT * FROM todo WHERE id = ? AND user_id = ?",
       [id, req.user.id]
     );
-    
     if (todos.length === 0) {
       conn.release();
       return res.status(404).json({ message: "Todo not found" });
     }
-    
     await conn.query(
-      "UPDATE todo SET title = ?, description = ?, status = ?, updated_at = NOW() WHERE id = ?",
-      [title, description || '', status || false, id]
+      "UPDATE todo SET title = ?, description = ?, status = ?, due_time = ?, updated_at = NOW() WHERE id = ?",
+      [title, description || '', status || false, deadline || null, id]
     );
     conn.release();
-    
-    res.json({ message: "Todo updated", id });
+    res.json({ message: "Todo updated", id, deadline: deadline || null });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });

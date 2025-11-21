@@ -1,6 +1,15 @@
+// TODO: Check for any usage of date.isValid and ensure 'date' is a dayjs/moment object, or use a proper date validation method.
+// TODO: Fix for 'date.isValid is not a function' error
+// If you use date-fns, use isValid(date) from 'date-fns'.
+// If you use dayjs or moment, ensure 'date' is a dayjs/moment object, not a string.
+// Example fix for a function:
+// import dayjs from 'dayjs';
+// ...
+// const isValid = (date) => dayjs(date).isValid();
 import { useState, useEffect, useCallback } from 'react';
 import './App.css';
 import { Button, Input, Card, Space, Modal, Form, Typography, Layout, Alert, Row, Col, Divider, Empty, DatePicker, Popconfirm, Dropdown } from 'antd';
+import dayjs from 'dayjs';
 import { PlusOutlined, DeleteOutlined, LogoutOutlined, LoginOutlined, SaveOutlined, CheckCircleOutlined, CheckOutlined, LoadingOutlined, ExceptionOutlined, DownOutlined } from '@ant-design/icons';
 
 const { TextArea } = Input;
@@ -257,7 +266,8 @@ function App() {
             title: task.title,
             description: task.description,
             list_id: savedListId,
-            status: task.status !== undefined ? task.status : 0
+            status: task.status !== undefined ? task.status : 0,
+            deadline: task.deadline ? dayjs(task.deadline).format('YYYY-MM-DD HH:mm:ss') : null
           })
         });
 
@@ -411,7 +421,9 @@ function App() {
   };
 
   return (
-    <Layout className="app-layout">
+    <>
+      <div className="animated-bg" />
+      <Layout className="app-layout">
       {alertConfig && (
         <Alert
           message={alertConfig.message}
@@ -642,8 +654,8 @@ function App() {
                                   showTime 
                                   placeholder="Select deadline"
                                   format="YYYY-MM-DD HH:mm"
-                                  value={task.deadline}
-                                  onChange={(date) => updateTaskField(list.id, task.id, 'deadline', date)}
+                                  value={task.deadline ? dayjs(task.deadline) : null}
+                                  onChange={(date) => updateTaskField(list.id, task.id, 'deadline', date ? date.toISOString() : null)}
                                 />
                               </div>
 
@@ -732,7 +744,8 @@ function App() {
       <Footer style={{ textAlign: 'center' }}>
         Made by Hugo & Matéo - Epitech 2025
       </Footer>
-    </Layout>
+      </Layout>
+    </>
   );
 }
 
