@@ -1,10 +1,7 @@
-
 const pool = require("../../config/db");
 const express = require("express");
 const router = express.Router();
 const auth_middleware = require("../../middleware/auth");
-
-
 
 //ROUTES FOR LISTS
 
@@ -22,7 +19,7 @@ router.get("/lists", auth_middleware, async (req, res) => {
     // For each list, retrieve its todos
     for (let list of lists) {
       const [todos] = await conn.query(
-        `SELECT * FROM todo WHERE list_id = ? ORDER BY position ASC`,
+        `SELECT id, user_id, list_id, title, description, status, position, created_at, updated_at, due_time as deadline FROM todo WHERE list_id = ? ORDER BY position ASC`,
         [list.id]
       );
       list.subtasks = todos; // Add todos to the list
@@ -131,9 +128,7 @@ router.delete("/lists/:id", auth_middleware, async (req, res) => {
   }
 });
 
-
 // ROUTES FOR TODOS 
-
 
 // POST create a new todo
 router.post("/todos", auth_middleware, async (req, res) => {
@@ -160,18 +155,17 @@ router.post("/todos", auth_middleware, async (req, res) => {
     const nextPosition = (positions[0].maxPos || 0) + 1;
     const [result] = await conn.query(
       "INSERT INTO todo (user_id, list_id, title, description, status, position, created_at, updated_at, due_time) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW(), ?)",
-      [req.user.id, list_id, title, description || '', status || false, nextPosition, deadline || null]
+      [req.user.id, list_id, title, description || '', status || 0, nextPosition, deadline || null]
     );
+    
+    // Get the newly created todo with all fields
+    const [newTodo] = await conn.query(
+      "SELECT id, user_id, list_id, title, description, status, position, created_at, updated_at, due_time as deadline FROM todo WHERE id = ?",
+      [result.insertId]
+    );
+    
     conn.release();
-    res.status(201).json({ 
-      id: result.insertId, 
-      list_id,
-      title, 
-      description,
-      status: status || false,
-      position: nextPosition,
-      deadline: deadline || null
-    });
+    res.status(201).json(newTodo[0]);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
@@ -198,10 +192,17 @@ router.put("/todos/:id", auth_middleware, async (req, res) => {
     }
     await conn.query(
       "UPDATE todo SET title = ?, description = ?, status = ?, due_time = ?, updated_at = NOW() WHERE id = ?",
-      [title, description || '', status || false, deadline || null, id]
+      [title, description || '', status !== undefined ? status : 0, deadline || null, id]
     );
+    
+    // Get the updated todo with all fields
+    const [updatedTodo] = await conn.query(
+      "SELECT id, user_id, list_id, title, description, status, position, created_at, updated_at, due_time as deadline FROM todo WHERE id = ?",
+      [id]
+    );
+    
     conn.release();
-    res.json({ message: "Todo updated", id, deadline: deadline || null });
+    res.json(updatedTodo[0]);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });

@@ -241,13 +241,12 @@ function App() {
 
       const savedTasks = [];
 
-        for (const task of list.subtasks) {
+      for (const task of list.subtasks) {
         const isNewTask = task.id < 0;
         const taskEndpoint = isNewTask
           ? 'http://127.0.0.1:3001/api/todos'
           : `http://127.0.0.1:3001/api/todos/${task.id}`;
 
-        
         const taskResponse = await fetch(taskEndpoint, {
           method: isNewTask ? 'POST' : 'PUT',
           headers: {
@@ -269,16 +268,24 @@ function App() {
         }
 
         const taskData = await taskResponse.json();
+        const currentTask = list.subtasks.find(t => t.id === task.id);
         savedTasks.push({
-          ...task,
-          id: taskData.id,
+          ...currentTask,
+          ...taskData,
+          deadline: taskData.deadline,
           isSaved: true
         });
       }
 
       setLists(lists.map(l =>
         l.id === listId
-          ? { ...l, id: savedListId, isSaved: true, subtasks: savedTasks }
+          ? {
+              ...l,
+              ...listData,
+              id: savedListId,
+              isSaved: true,
+              subtasks: savedTasks
+            }
           : l
       ));
 
@@ -662,10 +669,9 @@ function App() {
                                 placeholder="Task description..."
                                 value={task.description}
                                 onChange={(e) => updateTaskField(list.id, task.id, 'description', e.target.value)}
-                                rows={3}
+                                rows={6}
                                 maxLength={300}
                               />
-                              <br />
                               <div className="titanic-progress">
                                 <div className="progress-header">
                                   <Text strong style={{ color: '#F1F1EC' }}>Task Status:</Text>
@@ -685,7 +691,7 @@ function App() {
                                           key: '1',
                                           label: 'In Progress',
                                           icon: <LoadingOutlined />,
-
+                                          
                                           onClick: () => { updateTaskField(list.id, task.id, 'status', 1);
                                             }
                                         },
