@@ -8,9 +8,9 @@
 // const isValid = (date) => dayjs(date).isValid();
 import { useState, useEffect, useCallback } from 'react';
 import './App.css';
-import { Button, Input, Card, Space, Modal, Form, Typography, Layout, Alert, Row, Col, Divider, Empty, DatePicker, Popconfirm, Dropdown } from 'antd';
+import { Button, Input, Card, Space, Modal, Form, Typography, Layout, Alert, Row, Col, Divider, Empty, DatePicker, Popconfirm, Dropdown, Menu } from 'antd';
 import dayjs from 'dayjs';
-import { PlusOutlined, DeleteOutlined, LogoutOutlined, LoginOutlined, SaveOutlined, CheckCircleOutlined, CheckOutlined, LoadingOutlined, ExceptionOutlined, DownOutlined } from '@ant-design/icons';
+import { PlusOutlined, DeleteOutlined, LogoutOutlined, LoginOutlined, SaveOutlined, CheckCircleOutlined, CheckOutlined, LoadingOutlined, ExceptionOutlined, DownOutlined , SettingOutlined  } from '@ant-design/icons';
 
 const { TextArea } = Input;
 const { Title, Text } = Typography;
@@ -501,9 +501,14 @@ function App() {
 
         {currentUser ? (
           <Space>
+             
+          <Button className = 'setting'  icon = {<SettingOutlined/>}>
+          </Button>
+            
             <Text className="white-font">
               Welcome, {userName}
             </Text>
+            
             <Button type="primary" danger icon={<LogoutOutlined />} onClick={logout}>
               Logout
             </Button>
