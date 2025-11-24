@@ -1,11 +1,3 @@
-// TODO: Check for any usage of date.isValid and ensure 'date' is a dayjs/moment object, or use a proper date validation method.
-// TODO: Fix for 'date.isValid is not a function' error
-// If you use date-fns, use isValid(date) from 'date-fns'.
-// If you use dayjs or moment, ensure 'date' is a dayjs/moment object, not a string.
-// Example fix for a function:
-// import dayjs from 'dayjs';
-// ...
-// const isValid = (date) => dayjs(date).isValid();
 import { useState, useEffect, useCallback } from 'react';
 import './App.css';
 import { Button, Input, Card, Space, Modal, Form, Typography, Layout, Alert, Row, Col, Divider, Empty, DatePicker, Popconfirm, Dropdown } from 'antd';
@@ -686,7 +678,7 @@ function App() {
                                           key: '0',
                                           label: 'To do',
                                           icon: <ExceptionOutlined />,
-                                          onClick: () => { updateTaskField(list.id, task.id, 'status', 0); //showAlert('Task status updated to "To do"', 'success'); 
+                                          onClick: () => { updateTaskField(list.id, task.id, 'status', 0);
                                             }
                                         },
                                         {
@@ -694,21 +686,21 @@ function App() {
                                           label: 'In Progress',
                                           icon: <LoadingOutlined />,
 
-                                          onClick: () => { updateTaskField(list.id, task.id, 'status', 1); //showAlert('Task status updated to "In Progress"', 'success'); 
+                                          onClick: () => { updateTaskField(list.id, task.id, 'status', 1);
                                             }
                                         },
                                         {
                                           key: '2',
-                                          label: 'Finished',
+                                          label: 'Done',
                                           icon: <CheckOutlined />,
-                                          onClick: () => { updateTaskField(list.id, task.id, 'status', 2); //showAlert('Task status updated to "Finished"', 'success'); 
+                                          onClick: () => { updateTaskField(list.id, task.id, 'status', 2);
                                             }
                                         },
                                       ],
                                     }}
                                   >
                                     <Button size="small" className="dropdown-status-button">
-                                      {task.status === 0 ? <><ExceptionOutlined /> To do</> : task.status === 1 ? <><LoadingOutlined /> In Progress</> : <><CheckOutlined /> Finished</>}
+                                      {task.status === 0 ? <><ExceptionOutlined /> To do</> : task.status === 1 ? <><LoadingOutlined /> In Progress</> : <><CheckOutlined /> Done</>}
                                       {' '}<DownOutlined />
                                     </Button>
                                   </Dropdown>
@@ -726,7 +718,7 @@ function App() {
                                 <div className="progress-labels">
                                   <span>To do</span>
                                   <span>In Progress</span>
-                                  <span>Finished</span>
+                                  <span>Done</span>
                                 </div>
                               </div>
                             </Space>
