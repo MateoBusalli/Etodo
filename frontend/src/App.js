@@ -517,7 +517,22 @@ const handleSettingsCancel = () => {
         <img src='/iceberg.png' alt='iceberg' style = {{maxWidth: '100px',height: '40px',marginTop: '-70px',marginRight: '200px'}} >
         </img>
         </div>
-        {<Button icon = {<UserOutlined />}>Profile</Button>}
+        <h4 style={{color: '#ffffff'}}>Enter your current password</h4>
+        <Form.Item  style={{ color: '#ffffff' }} required>
+            <Input.Password
+              placeholder="Password"
+              value={authForm.password}
+              onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })}
+            />
+          </Form.Item>
+           <h4 style={{color: '#ffffff'}}>Enter your new password</h4>
+            <Form.Item  style={{ color: '#ffffff' }} required>
+            <Input.Password
+              placeholder="Password"
+              value={authForm.setAuthForm}
+              onChange={(e) => setAuthForm({ ...authForm, setAuthForm: e.target.value })}
+            />
+          </Form.Item>
       </Modal>
       <Header className="app-header">
         <Title level={2} className="app-title">
