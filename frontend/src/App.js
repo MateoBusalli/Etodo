@@ -501,7 +501,7 @@ const handleSettingsCancel = () => {
         </Form>
       </Modal>
            <Modal
-        title=" ICE settings" 
+        title=" ICEttings" 
         open={isSettingsModalOpen}
         onCancel={handleSettingsCancel}
         footer={[
