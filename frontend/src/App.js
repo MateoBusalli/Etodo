@@ -15,6 +15,7 @@ function App() {
   const [showAuthPopup, setShowAuthPopup] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [authForm, setAuthForm] = useState({ name: '', firstname: '', email: '', password: '' });
+  const [passwordChangeForm, setPasswordChangeForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
 
 
   const [lists, setLists] = useState([]);
@@ -32,7 +33,63 @@ function App() {
 
 const handleSettingsCancel = () => {
   setIsSettingsModalOpen(false);
+  setPasswordChangeForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
 };
+
+  const handleChangePassword = async () => {
+    const { currentPassword, newPassword, confirmPassword } = passwordChangeForm;
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      showAlert('Please login first', 'warning');
+      return;
+    }
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      showAlert('All password fields are required', 'error');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      showAlert('New passwords do not match', 'error');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      showAlert('New password must be at least 6 characters', 'error');
+      return;
+    }
+
+    if (currentPassword === newPassword) {
+      showAlert('The password has already been used')
+    }
+
+    try {
+  const response = await fetch('http://127.0.0.1:3001/api/auth/change-password', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          currentPassword,
+          newPassword
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to change password');
+      }
+
+      showAlert('Password changed successfully', 'success');
+      setPasswordChangeForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      setIsSettingsModalOpen(false);
+    } catch (error) {
+      showAlert('Error changing password: ' + error.message, 'error');
+    }
+  };
+
 
   const showAlert = (message, type = 'info') => {
     setAlertConfig({ message, type });
@@ -501,36 +558,45 @@ const handleSettingsCancel = () => {
         </Form>
       </Modal>
            <Modal
-        title=" ICEttings" 
+        title="ICEttings" 
         open={isSettingsModalOpen}
         onCancel={handleSettingsCancel}
         footer={[
           <Button key="back" onClick={handleSettingsCancel}>
             Cancel
           </Button>,
-          <Button key="submit" type="primary" onClick={handleSettingsCancel}>
+          <Button key="submit" type="primary" onClick={handleChangePassword}>
             Save
           </Button>,
         ]}
       >
+        
         <div style={{textAlign: 'center',marginBottom: '20px'}}>
-        <img src='/iceberg.png' alt='iceberg' style = {{maxWidth: '100px',height: '40px',marginTop: '-70px',marginRight: '200px'}} >
+        <img src='/iceberg.png' alt='iceberg' style = {{maxWidth: '100px',height: '40px',marginTop: '-70px',marginRight: '250px'}} >
         </img>
         </div>
         <h4 style={{color: '#ffffff'}}>Enter your current password</h4>
         <Form.Item  style={{ color: '#ffffff' }} required>
             <Input.Password
-              placeholder="Password"
-              value={authForm.password}
-              onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })}
+              placeholder="Current Password"
+              value={passwordChangeForm.currentPassword}
+              onChange={(e) => setPasswordChangeForm({ ...passwordChangeForm, currentPassword: e.target.value })}
             />
           </Form.Item>
            <h4 style={{color: '#ffffff'}}>Enter your new password</h4>
             <Form.Item  style={{ color: '#ffffff' }} required>
             <Input.Password
-              placeholder="Password"
-              value={authForm.setAuthForm}
-              onChange={(e) => setAuthForm({ ...authForm, setAuthForm: e.target.value })}
+              placeholder="New Password"
+              value={passwordChangeForm.newPassword}
+              onChange={(e) => setPasswordChangeForm({ ...passwordChangeForm, newPassword: e.target.value })}
+            />
+          </Form.Item>
+           <h4 style={{color: '#ffffff'}}>Confirm your new password</h4>
+            <Form.Item  style={{ color: '#ffffff' }} required>
+            <Input.Password
+              placeholder="Confirm New Password"
+              value={passwordChangeForm.confirmPassword}
+              onChange={(e) => setPasswordChangeForm({ ...passwordChangeForm, confirmPassword: e.target.value })}
             />
           </Form.Item>
       </Modal>
