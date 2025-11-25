@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import './App.css';
-import { Button, Input, Card, Space, Modal, Form, Typography, Layout, Alert, Row, Col, Divider, Empty, DatePicker, Popconfirm, Dropdown } from 'antd';
+import { Button, Input, Card, Space, Modal, Form, Typography, Layout, Alert, Row, Col, Divider, Empty, DatePicker, Popconfirm, Dropdown, Menu } from 'antd';
 import dayjs from 'dayjs';
-import { PlusOutlined, DeleteOutlined, LogoutOutlined, LoginOutlined, SaveOutlined, CheckCircleOutlined, CheckOutlined, LoadingOutlined, ExceptionOutlined, DownOutlined } from '@ant-design/icons';
+import { PlusOutlined, DeleteOutlined, LogoutOutlined, LoginOutlined, SaveOutlined, CheckCircleOutlined, CheckOutlined, LoadingOutlined, ExceptionOutlined, DownOutlined , SettingOutlined , UserOutlined } from '@ant-design/icons';
 
 const { TextArea } = Input;
 const { Title, Text } = Typography;
@@ -10,6 +10,7 @@ const { Header, Content, Footer } = Layout;
 
 
 function App() {
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [showAuthPopup, setShowAuthPopup] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
@@ -25,6 +26,13 @@ function App() {
   const [alertConfig, setAlertConfig] = useState(null);
   const [isAlertExiting, setIsAlertExiting] = useState(false);
 
+  const showSettingsModal = () => {
+  setIsSettingsModalOpen(true);
+};
+
+const handleSettingsCancel = () => {
+  setIsSettingsModalOpen(false);
+};
 
   const showAlert = (message, type = 'info') => {
     setAlertConfig({ message, type });
@@ -492,7 +500,25 @@ function App() {
           </div>
         </Form>
       </Modal>
-
+           <Modal
+        title=" ICE settings" 
+        open={isSettingsModalOpen}
+        onCancel={handleSettingsCancel}
+        footer={[
+          <Button key="back" onClick={handleSettingsCancel}>
+            Cancel
+          </Button>,
+          <Button key="submit" type="primary" onClick={handleSettingsCancel}>
+            Save
+          </Button>,
+        ]}
+      >
+        <div style={{textAlign: 'center',marginBottom: '20px'}}>
+        <img src='/iceberg.png' alt='iceberg' style = {{maxWidth: '100px',height: '40px',marginTop: '-70px',marginRight: '200px'}} >
+        </img>
+        </div>
+        {<Button icon = {<UserOutlined />}>Profile</Button>}
+      </Modal>
       <Header className="app-header">
         <Title level={2} className="app-title">
           ICEBERG
@@ -500,9 +526,13 @@ function App() {
 
         {currentUser ? (
           <Space>
+          <Button className = 'setting'  icon = {<SettingOutlined/>} onClick={showSettingsModal} >
+          </Button>
+            
             <Text className="white-font">
               Welcome, {userName}
             </Text>
+            
             <Button type="primary" danger icon={<LogoutOutlined />} onClick={logout}>
               Logout
             </Button>

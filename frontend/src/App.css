@@ -1020,3 +1020,30 @@ color: #FAFAEC;
   box-shadow: 0 2px 8px #F1F1EC88 !important;
   color: #181B28 !important;
 }
+
+.setting{
+border-color: transparent !important;
+background-color: transparent !important;
+color:#F1F1EC !important;
+font-size: 20px;
+}
+
+.setting:hover{
+border-color: transparent !important;
+background-color: #F1F1EC !important;
+box-shadow: 0 2px 8px #F1F1EC88 !important;
+color: black !important;
+animation-name: rotate;
+animation-duration: 0.7s;
+animation-timing-function: ease-in-out;
+}
+
+
+@keyframes rotate {
+  0%{
+    transform: rotate(0deg);
+  }
+  100%{
+    transform: rotate(180deg);
+  }
+}
