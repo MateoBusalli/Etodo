@@ -1,5 +1,8 @@
+-- initialize database
 CREATE DATABASE IF NOT EXISTS etodo;
 USE etodo;
+
+-- create user table
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE,
@@ -10,6 +13,8 @@ CREATE TABLE IF NOT EXISTS users (
     end_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     task_status INT DEFAULT 0
 );
+
+-- create lists table
 CREATE TABLE IF NOT EXISTS lists (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -21,6 +26,8 @@ CREATE TABLE IF NOT EXISTS lists (
     task_status INT DEFAULT 0,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+-- create todo table
 CREATE TABLE IF NOT EXISTS todo(
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
