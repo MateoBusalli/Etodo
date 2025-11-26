@@ -131,7 +131,7 @@ npm start
 
 ## Technologies Used
 - **Backend:** Node.js, Express, MARIADB, JWT
-- **Frontend:** React, JavaScript, CSS
+- **Frontend:** React, JavaScript, CSS, AntDesign
 - **DevOps:** Docker, Docker Compose
 
 ## Authors
