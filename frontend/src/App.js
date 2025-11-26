@@ -60,7 +60,7 @@ const handleSettingsCancel = () => {
       return;
     }
 
-    if (currentPassword === newPassword) {
+    if (newPassword === currentPassword) {
       showAlert('The password has already been used')
     }
 

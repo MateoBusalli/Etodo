@@ -163,6 +163,14 @@ router.put('/change-password', auth_middleware, async (req, res) => {
             });
         }
 
+        if(newPassword === currentPassword){
+            return res.status(401).json({
+            success: false,
+            message: 'The password is already in use.'
+   
+            });
+        }
+
         // Get user from DB
         const [users] = await db.query(
             'SELECT id, password FROM users WHERE id = ?',
