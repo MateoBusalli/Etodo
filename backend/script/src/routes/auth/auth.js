@@ -142,4 +142,80 @@ router.get('/me', auth_middleware, async (req, res) => {
     }
 });
 
+
+// Change password
+router.put('/change-password', auth_middleware, async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const userId = req.user.id;
+
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({
+                success: false,
+                message: 'Current password and new password are required'
+            });
+        }
+
+        if (newPassword.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: 'New password must be at least 6 characters'
+            });
+        }
+
+        if(newPassword === currentPassword){
+            return res.status(401).json({
+            success: false,
+            message: 'The password is already in use.'
+   
+            });
+        }
+
+        // Get user from DB
+        const [users] = await db.query(
+            'SELECT id, password FROM users WHERE id = ?',
+            [userId]
+        );
+
+        if (users.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        const user = users[0];
+
+        // Verify current password
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+
+        if (!isMatch) {
+            return res.status(401).json({
+                success: false,
+                message: 'Current password is incorrect'
+            });
+        }
+
+        // Hash new password
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+        // Update password in DB
+        await db.query(
+            'UPDATE users SET password = ? WHERE id = ?',
+            [hashedNewPassword, userId]
+        );
+
+        return res.json({
+            success: true,
+            message: 'Password changed successfully'
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: 'Server error'
+        });
+    }
+});
+
 module.exports = router;
