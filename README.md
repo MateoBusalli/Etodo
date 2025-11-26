@@ -6,11 +6,10 @@ Etodo is a todo list app.
 
 ## Features
 
-- User authentication (register, login, JWT-based sessions)
+- User authentication (register, login, JWT)
 - CRUD operations for todos (create, read, update, delete)
 - User-specific todo lists
 - Responsive React frontend
-- RESTful API
 - Error handling and middleware
 - Dockerized backend and frontend
 
@@ -56,7 +55,7 @@ B-WEB-101-NCE-1-1-etodo-4/
 ## Prerequisites
 
 - Docker & Docker Compose
-- Node.js (for local development)
+- Node.js
 - npm or yarn
 
 ## Setup & Usage
@@ -115,7 +114,7 @@ npm install
 npm start
 ```
 
-## API Endpoints
+## API
 
 ### Auth
 - `POST /api/auth/register` — Register a new user
