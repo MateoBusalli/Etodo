@@ -74,14 +74,14 @@ Create environment variable files as needed for backend and frontend.
 ```
 DB_HOST=database
 DB_USER=youruser
-DB_PASSWORD=yourpassword
+DB_PASSWORD=password_db
 DB_NAME=etodo
-JWT_SECRET=your_jwt_secret
+JWT_SECRET=jwt_token
 ```
 
 #### Frontend example (`frontend/.env`):
 ```
-REACT_APP_API_URL=http://localhost:5000
+REACT_APP_API_URL=http://localhost:3001
 ```
 
 ### 3. Database Setup
@@ -95,7 +95,7 @@ REACT_APP_API_URL=http://localhost:5000
 docker-compose up --build
 ```
 
-- The backend will be available at `http://localhost:5000`
+- The backend will be available at `http://localhost:3001`
 - The frontend will be available at `http://localhost:3000`
 
 ### 5. Running Locally (Without Docker)
