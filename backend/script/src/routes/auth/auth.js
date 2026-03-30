@@ -62,6 +62,7 @@ router.post('/register', async (req, res) => {
     }
 });
 
+
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -160,14 +161,6 @@ router.put('/change-password', auth_middleware, async (req, res) => {
             return res.status(400).json({
                 success: false,
                 message: 'New password must be at least 6 characters'
-            });
-        }
-
-        if(newPassword === currentPassword){
-            return res.status(401).json({
-            success: false,
-            message: 'The password is already in use.'
-   
             });
         }
 

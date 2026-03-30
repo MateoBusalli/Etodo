@@ -19,6 +19,7 @@ function App() {
   const [isLogin, setIsLogin] = useState(true);
   const [authForm, setAuthForm] = useState({ name: '', firstname: '', email: '', password: '' });
   const [passwordChangeForm, setPasswordChangeForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  
 
 
   const [lists, setLists] = useState([]);
@@ -64,7 +65,7 @@ const handleSettingsCancel = () => {
       return;
     }
 
-    if (newPassword === currentPassword) {
+    if (currentPassword === newPassword) {
       showAlert('The password has already been used')
     }
 
